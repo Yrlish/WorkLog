@@ -1,0 +1,29 @@
+plugins {
+    id "com.github.johnrengelman.shadow" version "2.0.1"
+}
+
+group 'xyz.alexandersson'
+version '0.1'
+
+apply plugin: 'java'
+apply plugin: 'application'
+
+sourceCompatibility = 1.8
+mainClassName = "xyz.alexandersson.worklog.WorkLog"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'org.jetbrains', name: 'annotations', version: '15.0'
+
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.8.2'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.8.2'
+
+    compile group: 'org.hibernate', name: 'hibernate-core', version: '5.2.10.Final'
+
+    compile group: 'org.hsqldb', name: 'hsqldb', version: '2.4.0'
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
