@@ -4,10 +4,20 @@
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%highlight{%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg}%n"/>
         </Console>
+        <File name="RollingFile">
+            <FileName>application.log</FileName>
+            <PatternLayout>
+                <Pattern>%d{yyyy-MMM-dd HH:mm:ss a} [%t] %-5level %logger{36} - %msg%n</Pattern>
+            </PatternLayout>
+        </File>
     </Appenders>
     <Loggers>
         <Root level="debug">
+            <AppenderRef ref="RollingFile"/>
             <AppenderRef ref="Console"/>
         </Root>
+        <Logger name="org.hibernate" level="info" additivity="false">
+            <AppenderRef ref="RollingFile"/>
+        </Logger>
     </Loggers>
 </Configuration>
