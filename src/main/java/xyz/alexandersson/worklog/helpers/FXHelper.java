@@ -3,6 +3,8 @@ package xyz.alexandersson.worklog.helpers;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 import javafx.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -38,14 +40,26 @@ public class FXHelper {
         }
 
         FXMLLoader fxmlLoader = new FXMLLoader(fxmlFile);
-        T controller = fxmlLoader.getController();
-        Parent parent = null;
         try {
-            parent = fxmlLoader.load();
+            Parent parent = fxmlLoader.load();
+            T controller = fxmlLoader.getController();
+
+            return new Pair<>(controller, parent);
         } catch (IOException e) {
             LOGGER.error("Could not load fxml file {}", fxmlFile.toString().split("!")[1], e);
         }
 
-        return new Pair<>(controller, parent);
+        return new Pair<>(null, null);
+    }
+
+    public static void loadWindow(@NotNull Parent parent, String title, boolean resizeable) {
+        Stage stage = new Stage();
+        Scene scene = new Scene(parent);
+
+        stage.setTitle(title);
+        stage.setScene(scene);
+        stage.setResizable(resizeable);
+
+        stage.show();
     }
 }

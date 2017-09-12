@@ -19,7 +19,7 @@ public class DatabaseHelper {
 
     private static SessionFactory sessionFactory = new Configuration().configure("/hibernate.cfg.xml").buildSessionFactory();
 
-    public static void saveLogEntry(@NotNull LogEntry logEntry) {
+    public static void saveUpdateLogEntry(@NotNull LogEntry logEntry) {
         Session session = null;
         Transaction transaction = null;
         try {

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
@@ -26,8 +25,8 @@
             </Label>
             <DatePicker fx:id="datePicker" editable="false" prefWidth="150.0"/>
             <HBox prefWidth="150.0" spacing="5.0">
-                <ComboBox fx:id="projectComboBox" prefWidth="120.0" promptText="Select project"/>
-                <Button fx:id="addProject" text="+"/>
+                <ComboBox fx:id="projectComboBox" prefWidth="150.0" promptText="Select project"/>
+                <Button fx:id="addProject" minWidth="25.0" text="+"/>
             </HBox>
             <TextField fx:id="startTextField" prefWidth="150" promptText="Start time"/>
             <TextField fx:id="stopTextField" prefWidth="150" promptText="Stop time"/>

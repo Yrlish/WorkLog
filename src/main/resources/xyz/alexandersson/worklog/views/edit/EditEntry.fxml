@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1"
+            xmlns="http://javafx.com/javafx/8.0.40"
+            fx:controller="xyz.alexandersson.worklog.views.edit.EditEntryController"
+            prefWidth="275.0">
+    <VBox alignment="TOP_CENTER" layoutX="70.0" layoutY="71.0" spacing="10.0" AnchorPane.bottomAnchor="0.0"
+          AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+        </padding>
+        <Label text="Edit Entry">
+            <font>
+                <Font name="System Bold" size="24.0"/>
+            </font>
+        </Label>
+        <VBox>
+            <Label text="Date"/>
+            <DatePicker fx:id="datePicker" editable="false" maxWidth="300.0"/>
+        </VBox>
+        <VBox>
+            <Label text="Project"/>
+            <HBox prefWidth="150.0" spacing="5.0">
+                <ComboBox fx:id="projectComboBox" prefWidth="300.0" promptText="Select project"/>
+                <Button fx:id="addProject" minWidth="25.0" text="+"/>
+            </HBox>
+        </VBox>
+        <VBox>
+            <Label text="Start time"/>
+            <TextField fx:id="startTextField"/>
+        </VBox>
+        <VBox>
+            <Label text="Stop time"/>
+            <TextField fx:id="stopTextField"/>
+        </VBox>
+        <VBox>
+            <Label text="Comments (optional)"/>
+            <TextArea fx:id="commentArea" prefHeight="60.0"/>
+        </VBox>
+        <Button fx:id="saveBtn" defaultButton="true" text="Save"/>
+    </VBox>
+</AnchorPane>

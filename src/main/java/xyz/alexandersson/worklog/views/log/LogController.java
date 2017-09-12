@@ -7,11 +7,16 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.util.Pair;
+import xyz.alexandersson.worklog.TextFieldTimeChangeListener;
 import xyz.alexandersson.worklog.helpers.DatabaseHelper;
+import xyz.alexandersson.worklog.helpers.FXHelper;
 import xyz.alexandersson.worklog.models.LogEntry;
 import xyz.alexandersson.worklog.models.Project;
 import xyz.alexandersson.worklog.models.TotalEntry;
+import xyz.alexandersson.worklog.views.edit.EditEntryController;
 
 import java.net.URL;
 import java.time.Duration;
@@ -60,28 +65,8 @@ public class LogController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        startTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.isEmpty() && !newValue.matches("^(00?[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$")) {
-                if (newValue.matches("^(00?[0-9]|1[0-9]|2[0-3])$")) {
-                    startTextField.setText(newValue + ":");
-                }
-
-                startTextField.setStyle("-fx-text-box-border: red; -fx-focus-color: red;");
-            } else {
-                startTextField.setStyle("");
-            }
-        });
-        stopTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.isEmpty() && !newValue.matches("^(00?[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$")) {
-                if (newValue.matches("^(00?[0-9]|1[0-9]|2[0-3])$")) {
-                    stopTextField.setText(newValue + ":");
-                }
-
-                stopTextField.setStyle("-fx-text-box-border: red; -fx-focus-color: red;");
-            } else {
-                stopTextField.setStyle("");
-            }
-        });
+        startTextField.textProperty().addListener(new TextFieldTimeChangeListener(startTextField));
+        stopTextField.textProperty().addListener(new TextFieldTimeChangeListener(stopTextField));
 
         historyDateColumn.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getDate()));
         historyProjectColumn.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getProject()));
@@ -94,10 +79,25 @@ public class LogController implements Initializable {
 
         logHistoryTable.getItems().addListener((ListChangeListener<? super LogEntry>) c -> {
             c.next();
-            if (c.wasAdded()) {
+            if (c.wasAdded() || c.wasReplaced() || c.wasUpdated()) {
                 logHistoryTable.sort();
             }
         });
+
+        logHistoryTable.setOnMousePressed(event -> {
+            LogEntry selectedItem = logHistoryTable.getSelectionModel().getSelectedItem();
+            if (event.isPrimaryButtonDown()
+                    && event.getClickCount() == 2
+                    && selectedItem != null) {
+                Pair<EditEntryController, Parent> parentPair = FXHelper.loadFxml(EditEntryController.class);
+                EditEntryController controller = parentPair.getKey();
+                controller.setLogController(this);
+                controller.setLogEntry(selectedItem);
+
+                FXHelper.loadWindow(parentPair.getValue(), "Edit entry", false);
+            }
+        });
+
         logHistoryTable.getSortOrder().add(historyDateColumn);
         logHistoryTable.getSortOrder().add(historyStartColumn);
         logTotalTable.getSortOrder().add(totalDateColumn);
@@ -137,7 +137,7 @@ public class LogController implements Initializable {
         logEntry.setComment(commentArea.getText());
 
         logHistoryTable.getItems().add(logEntry);
-        DatabaseHelper.saveLogEntry(logEntry);
+        DatabaseHelper.saveUpdateLogEntry(logEntry);
 
         recalculateTotal();
 
@@ -172,5 +172,10 @@ public class LogController implements Initializable {
     private void resetForm() {
         startTextField.setText("");
         stopTextField.setText("");
+    }
+
+    public void reloadTables() {
+        logHistoryTable.refresh();
+        recalculateTotal();
     }
 }
