@@ -138,7 +138,7 @@ public class DatabaseHelper {
             session = getSession();
             transaction = session.beginTransaction();
 
-            Query<Project> query = session.createQuery("from Project", Project.class);
+            Query<Project> query = session.createQuery("from Project order by name", Project.class);
             return query.list();
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
