@@ -15,6 +15,8 @@ public class WorkLog extends Application {
 
     private static Logger LOGGER = LoggerFactory.getLogger(WorkLog.class);
 
+    private static final String VERSION = "0.3";
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         Pair<LogController, Parent> fxml = FXHelper.loadFxml(LogController.class);
@@ -24,7 +26,7 @@ public class WorkLog extends Application {
         primaryStage.setMinHeight(400);
         primaryStage.setMinWidth(600);
 
-        primaryStage.setTitle("WorkLog");
+        primaryStage.setTitle(String.format("WorkLog %s", VERSION));
         primaryStage.setScene(scene);
         primaryStage.show();
         LOGGER.info("Application started");
