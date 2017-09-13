@@ -24,10 +24,7 @@
         </VBox>
         <VBox>
             <Label text="Project"/>
-            <HBox prefWidth="150.0" spacing="5.0">
-                <ComboBox fx:id="projectComboBox" prefWidth="300.0" promptText="Select project"/>
-                <Button fx:id="addProject" minWidth="25.0" text="+"/>
-            </HBox>
+            <fx:include fx:id="projectRow" source="../../components/ProjectRow.fxml"/>
         </VBox>
         <VBox>
             <Label text="Start time"/>

@@ -24,9 +24,8 @@
                 </font>
             </Label>
             <DatePicker fx:id="datePicker" editable="false" prefWidth="150.0"/>
-            <HBox prefWidth="150.0" spacing="5.0">
-                <ComboBox fx:id="projectComboBox" prefWidth="150.0" promptText="Select project"/>
-                <ComboBox fx:id="projectActionComboBox" maxWidth="25.0" minWidth="25.0"/>
+            <HBox prefWidth="150">
+                <fx:include fx:id="projectRow" source="../../components/ProjectRow.fxml"/>
             </HBox>
             <TextField fx:id="startTextField" prefWidth="150" promptText="Start time"/>
             <TextField fx:id="stopTextField" prefWidth="150" promptText="Stop time"/>

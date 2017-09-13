@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.HBox?>
+<HBox xmlns:fx="http://javafx.com/fxml"
+      xmlns="http://javafx.com/javafx"
+      fx:controller="xyz.alexandersson.worklog.components.ProjectRowController"
+      spacing="5.0">
+    <ComboBox fx:id="projectComboBox" prefWidth="500" promptText="Select project"/>
+    <ComboBox fx:id="projectActionComboBox" maxWidth="25.0" minWidth="25.0"/>
+</HBox>

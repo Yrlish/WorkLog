@@ -1,6 +1,5 @@
 package xyz.alexandersson.worklog.views.log;
 
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
@@ -12,15 +11,16 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.stage.Modality;
+import javafx.stage.Window;
 import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.alexandersson.worklog.TextFieldTimeChangeListener;
+import xyz.alexandersson.worklog.components.ProjectRowController;
 import xyz.alexandersson.worklog.helpers.DatabaseHelper;
 import xyz.alexandersson.worklog.helpers.FXHelper;
 import xyz.alexandersson.worklog.models.LogEntry;
 import xyz.alexandersson.worklog.models.Project;
-import xyz.alexandersson.worklog.models.ProjectAction;
 import xyz.alexandersson.worklog.models.TotalEntry;
 import xyz.alexandersson.worklog.views.edit.EditEntryController;
 
@@ -32,8 +32,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import static xyz.alexandersson.worklog.models.ProjectAction.*;
-
 public class LogController implements Initializable {
 
     private static Logger LOGGER = LoggerFactory.getLogger(LogController.class);
@@ -41,9 +39,7 @@ public class LogController implements Initializable {
     @FXML
     private DatePicker datePicker;
     @FXML
-    private ComboBox<Project> projectComboBox;
-    @FXML
-    private ComboBox<ProjectAction> projectActionComboBox;
+    private ProjectRowController projectRowController;
     @FXML
     private TextField startTextField;
     @FXML
@@ -127,29 +123,11 @@ public class LogController implements Initializable {
         logTotalTable.getSortOrder().add(totalDateColumn);
         logTotalTable.getSortOrder().add(totalProjectColumn);
 
-        projectComboBox.itemsProperty().bind(projects);
+        projectRowController.setLogController(this);
+        projectRowController.init();
+
         datePicker.setValue(LocalDate.now());
         logBtn.setOnAction(event -> onLog());
-
-        projectActionComboBox.getItems().addAll(NEW, RENAME, DELETE);
-        projectActionComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                switch (newValue) {
-                    case NEW:
-                        onAddProject();
-                        break;
-                    case RENAME:
-                        onEditProject(projectComboBox.getSelectionModel().getSelectedItem());
-                        break;
-                    case DELETE:
-                        onDeleteProject(projectComboBox.getSelectionModel().getSelectedItem());
-                        break;
-                    default:
-                        break;
-                }
-                Platform.runLater(() -> projectActionComboBox.getSelectionModel().clearSelection());
-            }
-        });
 
         reloadData();
     }
@@ -162,9 +140,9 @@ public class LogController implements Initializable {
         recalculateTotal();
     }
 
-    private void onAddProject() {
+    public void onAddProject(Window window) {
         TextInputDialog dialog = new TextInputDialog();
-        dialog.initOwner(projectActionComboBox.getScene().getWindow());
+        dialog.initOwner(window);
         dialog.initModality(Modality.WINDOW_MODAL);
         dialog.setTitle("New project");
         dialog.setHeaderText("Name of the new project");
@@ -175,13 +153,23 @@ public class LogController implements Initializable {
             projects.add(project);
             DatabaseHelper.saveUpdateProject(project);
 
-            projectComboBox.getSelectionModel().select(project);
+            projectRowController.select(project);
         });
     }
 
-    private void onEditProject(Project project) {
+    public void onEditProject(Project project, Window window) {
+        if (project == null) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.initOwner(window);
+            alert.initModality(Modality.WINDOW_MODAL);
+            alert.setHeaderText("No project selected");
+            alert.setContentText("You need to select a project first.");
+            alert.showAndWait();
+            return;
+        }
+
         TextInputDialog dialog = new TextInputDialog(project.getName());
-        dialog.initOwner(projectActionComboBox.getScene().getWindow());
+        dialog.initOwner(window);
         dialog.initModality(Modality.WINDOW_MODAL);
         dialog.setTitle("Edit project");
         dialog.setHeaderText("Change the name of the project");
@@ -192,14 +180,14 @@ public class LogController implements Initializable {
 
             reloadData();
 
-            projectComboBox.getSelectionModel().select(project);
+            projectRowController.select(project);
         });
     }
 
-    private void onDeleteProject(Project project) {
+    public void onDeleteProject(Project project, Window window) {
         if (project == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.initOwner(projectActionComboBox.getScene().getWindow());
+            alert.initOwner(window);
             alert.initModality(Modality.WINDOW_MODAL);
             alert.setHeaderText("No project selected");
             alert.setContentText("You need to select a project first.");
@@ -212,14 +200,13 @@ public class LogController implements Initializable {
 
         if (projectInUse) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.initOwner(projectActionComboBox.getScene().getWindow());
+            alert.initOwner(window);
             alert.initModality(Modality.WINDOW_MODAL);
             alert.setHeaderText("Cannot delete project");
             alert.setContentText("Cannot delete this project because it is being used.");
             alert.showAndWait();
         } else {
-            projectComboBox.getSelectionModel().clearSelection();
-            projectComboBox.getItems().remove(project);
+            projectRowController.clear(project);
             DatabaseHelper.deleteProject(project);
         }
     }
@@ -227,7 +214,7 @@ public class LogController implements Initializable {
     private void onLog() {
         LogEntry logEntry = new LogEntry();
         logEntry.setDate(datePicker.getValue());
-        logEntry.setProject(projectComboBox.getValue());
+        logEntry.setProject(projectRowController.getProject());
         logEntry.setStartTime(LocalTime.parse(startTextField.getText()));
         logEntry.setStopTime(LocalTime.parse(stopTextField.getText()));
         logEntry.setComment(commentArea.getText());
@@ -247,7 +234,7 @@ public class LogController implements Initializable {
         controller.setLogController(this);
         controller.setLogEntry(logEntry);
 
-        FXHelper.loadWindow(parentPair.getValue(), "Edit entry", false);
+        FXHelper.loadWindow(parentPair.getValue(), "Edit entry", logHistoryTable.getScene().getWindow(), false);
     }
 
     private void onDelete(LogEntry logEntry) {
@@ -289,5 +276,9 @@ public class LogController implements Initializable {
     public void reloadTables() {
         logHistoryTable.refresh();
         recalculateTotal();
+    }
+
+    public ListProperty<Project> projectsProperty() {
+        return projects;
     }
 }

@@ -2,14 +2,17 @@ package xyz.alexandersson.worklog.views.edit;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.alexandersson.worklog.TextFieldTimeChangeListener;
+import xyz.alexandersson.worklog.components.ProjectRowController;
 import xyz.alexandersson.worklog.helpers.DatabaseHelper;
 import xyz.alexandersson.worklog.models.LogEntry;
-import xyz.alexandersson.worklog.models.Project;
 import xyz.alexandersson.worklog.views.log.LogController;
 
 import java.net.URL;
@@ -22,9 +25,7 @@ public class EditEntryController implements Initializable {
     @FXML
     private DatePicker datePicker;
     @FXML
-    private ComboBox<Project> projectComboBox;
-    @FXML
-    private Button addProject;
+    private ProjectRowController projectRowController;
     @FXML
     private TextField startTextField;
     @FXML
@@ -50,7 +51,7 @@ public class EditEntryController implements Initializable {
 
     private void onSave() {
         logEntry.setDate(datePicker.getValue());
-        logEntry.setProject(projectComboBox.getValue());
+        logEntry.setProject(projectRowController.getProject());
         logEntry.setStartTime(LocalTime.parse(startTextField.getText()));
         logEntry.setStopTime(LocalTime.parse(stopTextField.getText()));
         logEntry.setComment(commentArea.getText());
@@ -60,14 +61,10 @@ public class EditEntryController implements Initializable {
 
     private void fill() {
         datePicker.setValue(logEntry.getDate());
-        projectComboBox.getSelectionModel().select(logEntry.getProject());
+        projectRowController.select(logEntry.getProject());
         startTextField.setText(logEntry.getStartTime().format(DateTimeFormatter.ofPattern("HH:mm")));
         stopTextField.setText(logEntry.getStopTime().format(DateTimeFormatter.ofPattern("HH:mm")));
         commentArea.setText(logEntry.getComment());
-    }
-
-    public LogEntry getLogEntry() {
-        return logEntry;
     }
 
     public void setLogEntry(LogEntry logEntry) {
@@ -77,5 +74,7 @@ public class EditEntryController implements Initializable {
 
     public void setLogController(LogController logController) {
         this.logController = logController;
+        projectRowController.setLogController(logController);
+        projectRowController.init();
     }
 }

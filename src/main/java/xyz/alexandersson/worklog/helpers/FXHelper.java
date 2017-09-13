@@ -4,7 +4,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -52,9 +54,12 @@ public class FXHelper {
         return new Pair<>(null, null);
     }
 
-    public static void loadWindow(@NotNull Parent parent, String title, boolean resizeable) {
+    public static void loadWindow(@NotNull Parent parent, String title, Window owner, boolean resizeable) {
         Stage stage = new Stage();
         Scene scene = new Scene(parent);
+
+        stage.initOwner(owner);
+        stage.initModality(Modality.WINDOW_MODAL);
 
         stage.setTitle(title);
         stage.setScene(scene);
