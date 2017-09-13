@@ -283,6 +283,7 @@ public class LogController implements Initializable {
     private void resetForm() {
         startTextField.setText("");
         stopTextField.setText("");
+        commentArea.setText("");
     }
 
     public void reloadTables() {
