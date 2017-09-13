@@ -90,18 +90,18 @@ public class LogController implements Initializable {
             }
         });
 
-        logHistoryTable.setOnMousePressed(event -> {
-            LogEntry selectedItem = logHistoryTable.getSelectionModel().getSelectedItem();
-            if (event.isPrimaryButtonDown()
-                    && event.getClickCount() == 2
-                    && selectedItem != null) {
-                onEdit(selectedItem);
-            }
-        });
-
         logHistoryTable.setRowFactory(tableView -> {
             final TableRow<LogEntry> row = new TableRow<>();
             final ContextMenu rowMenu = new ContextMenu();
+
+            row.setOnMousePressed(event -> {
+                LogEntry selectedItem = row.getItem();
+                if (event.isPrimaryButtonDown()
+                        && event.getClickCount() == 2
+                        && row.getItem() != null) {
+                    onEdit(selectedItem);
+                }
+            });
 
             MenuItem editItem = new MenuItem("Edit");
             editItem.setOnAction(event -> onEdit(row.getItem()));
