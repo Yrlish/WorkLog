@@ -1,5 +1,6 @@
 package xyz.alexandersson.worklog.views.log;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -89,13 +90,27 @@ public class LogController implements Initializable {
             if (event.isPrimaryButtonDown()
                     && event.getClickCount() == 2
                     && selectedItem != null) {
-                Pair<EditEntryController, Parent> parentPair = FXHelper.loadFxml(EditEntryController.class);
-                EditEntryController controller = parentPair.getKey();
-                controller.setLogController(this);
-                controller.setLogEntry(selectedItem);
-
-                FXHelper.loadWindow(parentPair.getValue(), "Edit entry", false);
+                onEdit(selectedItem);
             }
+        });
+
+        logHistoryTable.setRowFactory(tableView -> {
+            final TableRow<LogEntry> row = new TableRow<>();
+            final ContextMenu rowMenu = new ContextMenu();
+
+            MenuItem editItem = new MenuItem("Edit");
+            editItem.setOnAction(event -> onEdit(row.getItem()));
+
+            MenuItem deleteItem = new MenuItem("Delete");
+            deleteItem.setOnAction(event -> onDelete(row.getItem()));
+
+            rowMenu.getItems().addAll(editItem, deleteItem);
+
+            row.contextMenuProperty().bind(
+                    Bindings.when(Bindings.isNotNull(row.itemProperty()))
+                            .then(rowMenu)
+                            .otherwise((ContextMenu) null));
+            return row;
         });
 
         logHistoryTable.getSortOrder().add(historyDateColumn);
@@ -122,10 +137,25 @@ public class LogController implements Initializable {
             Project project = new Project(str);
 
             projects.add(project);
-            DatabaseHelper.saveProject(project);
+            DatabaseHelper.saveUpdateProject(project);
 
             projectComboBox.getSelectionModel().select(project);
         });
+    }
+
+    private void onEdit(LogEntry logEntry) {
+        Pair<EditEntryController, Parent> parentPair = FXHelper.loadFxml(EditEntryController.class);
+        EditEntryController controller = parentPair.getKey();
+        controller.setLogController(this);
+        controller.setLogEntry(logEntry);
+
+        FXHelper.loadWindow(parentPair.getValue(), "Edit entry", false);
+    }
+
+    private void onDelete(LogEntry logEntry) {
+        DatabaseHelper.deleteLogEntry(logEntry);
+        logHistoryTable.getItems().remove(logEntry);
+        recalculateTotal();
     }
 
     private void onLog() {

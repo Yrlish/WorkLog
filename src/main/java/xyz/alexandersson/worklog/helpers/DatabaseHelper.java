@@ -19,7 +19,13 @@ public class DatabaseHelper {
 
     private static SessionFactory sessionFactory = new Configuration().configure("/hibernate.cfg.xml").buildSessionFactory();
 
-    public static void saveUpdateLogEntry(@NotNull LogEntry logEntry) {
+    /**
+     * Save or update a LogEntry to the database
+     *
+     * @param logEntry The LogEntry to save or update
+     * @return true if successful, false if failed
+     */
+    public static boolean saveUpdateLogEntry(@NotNull LogEntry logEntry) {
         Session session = null;
         Transaction transaction = null;
         try {
@@ -28,11 +34,13 @@ public class DatabaseHelper {
 
             session.saveOrUpdate(logEntry);
             session.getTransaction().commit();
+            return true;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             if (transaction != null) {
                 transaction.rollback();
             }
+            return false;
         } finally {
             if (session != null) {
                 session.close();
@@ -40,6 +48,21 @@ public class DatabaseHelper {
         }
     }
 
+    /**
+     * Delete a LogEntry from the database
+     *
+     * @param logEntry The LogEntry to delete
+     * @return true if successful, false if failed
+     */
+    public static boolean deleteLogEntry(@NotNull LogEntry logEntry) {
+        return delete(logEntry);
+    }
+
+    /**
+     * Returns all LogEntries from the database
+     *
+     * @return list of LogEntries
+     */
     @NotNull
     public static List<LogEntry> getLogEntries() {
         Session session = null;
@@ -63,7 +86,13 @@ public class DatabaseHelper {
         }
     }
 
-    public static void saveProject(@NotNull Project project) {
+    /**
+     * Save or update a project to the database
+     *
+     * @param project The Project to save
+     * @return true if successful, false if failed
+     */
+    public static boolean saveUpdateProject(@NotNull Project project) {
         Session session = null;
         Transaction transaction = null;
         try {
@@ -72,11 +101,13 @@ public class DatabaseHelper {
 
             session.saveOrUpdate(project);
             session.getTransaction().commit();
+            return true;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             if (transaction != null) {
                 transaction.rollback();
             }
+            return false;
         } finally {
             if (session != null) {
                 session.close();
@@ -84,6 +115,21 @@ public class DatabaseHelper {
         }
     }
 
+    /**
+     * Delete a Project from the database
+     *
+     * @param project The Project to delete
+     * @return true if successful, false if failed
+     */
+    public static boolean deleteProject(@NotNull Project project) {
+        return delete(project);
+    }
+
+    /**
+     * Returns all Projects from the database
+     *
+     * @return list of Projects
+     */
     @NotNull
     public static List<Project> getProjects() {
         Session session = null;
@@ -100,6 +146,29 @@ public class DatabaseHelper {
                 transaction.rollback();
             }
             return new ArrayList<>();
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+    }
+
+    private static boolean delete(Object object) {
+        Session session = null;
+        Transaction transaction = null;
+        try {
+            session = getSession();
+            transaction = session.beginTransaction();
+
+            session.delete(object);
+            session.getTransaction().commit();
+            return true;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            return false;
         } finally {
             if (session != null) {
                 session.close();
