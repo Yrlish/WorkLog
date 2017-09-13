@@ -1,5 +1,6 @@
 package xyz.alexandersson.worklog.views.log;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
@@ -10,12 +11,16 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.stage.Modality;
 import javafx.util.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import xyz.alexandersson.worklog.TextFieldTimeChangeListener;
 import xyz.alexandersson.worklog.helpers.DatabaseHelper;
 import xyz.alexandersson.worklog.helpers.FXHelper;
 import xyz.alexandersson.worklog.models.LogEntry;
 import xyz.alexandersson.worklog.models.Project;
+import xyz.alexandersson.worklog.models.ProjectAction;
 import xyz.alexandersson.worklog.models.TotalEntry;
 import xyz.alexandersson.worklog.views.edit.EditEntryController;
 
@@ -27,14 +32,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import static xyz.alexandersson.worklog.models.ProjectAction.*;
+
 public class LogController implements Initializable {
+
+    private static Logger LOGGER = LoggerFactory.getLogger(LogController.class);
 
     @FXML
     private DatePicker datePicker;
     @FXML
     private ComboBox<Project> projectComboBox;
     @FXML
-    private Button addProject;
+    private ComboBox<ProjectAction> projectActionComboBox;
     @FXML
     private TextField startTextField;
     @FXML
@@ -121,15 +130,42 @@ public class LogController implements Initializable {
         projectComboBox.itemsProperty().bind(projects);
         datePicker.setValue(LocalDate.now());
         logBtn.setOnAction(event -> onLog());
-        addProject.setOnAction(event -> onAddProject());
 
+        projectActionComboBox.getItems().addAll(NEW, RENAME, DELETE);
+        projectActionComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                switch (newValue) {
+                    case NEW:
+                        onAddProject();
+                        break;
+                    case RENAME:
+                        onEditProject(projectComboBox.getSelectionModel().getSelectedItem());
+                        break;
+                    case DELETE:
+                        onDeleteProject(projectComboBox.getSelectionModel().getSelectedItem());
+                        break;
+                    default:
+                        break;
+                }
+                Platform.runLater(() -> projectActionComboBox.getSelectionModel().clearSelection());
+            }
+        });
+
+        reloadData();
+    }
+
+    private void reloadData() {
+        projects.clear();
         projects.addAll(DatabaseHelper.getProjects());
+        logHistoryTable.getItems().clear();
         logHistoryTable.getItems().addAll(DatabaseHelper.getLogEntries());
         recalculateTotal();
     }
 
     private void onAddProject() {
         TextInputDialog dialog = new TextInputDialog();
+        dialog.initOwner(projectActionComboBox.getScene().getWindow());
+        dialog.initModality(Modality.WINDOW_MODAL);
         dialog.setTitle("New project");
         dialog.setHeaderText("Name of the new project");
 
@@ -143,19 +179,49 @@ public class LogController implements Initializable {
         });
     }
 
-    private void onEdit(LogEntry logEntry) {
-        Pair<EditEntryController, Parent> parentPair = FXHelper.loadFxml(EditEntryController.class);
-        EditEntryController controller = parentPair.getKey();
-        controller.setLogController(this);
-        controller.setLogEntry(logEntry);
+    private void onEditProject(Project project) {
+        TextInputDialog dialog = new TextInputDialog(project.getName());
+        dialog.initOwner(projectActionComboBox.getScene().getWindow());
+        dialog.initModality(Modality.WINDOW_MODAL);
+        dialog.setTitle("Edit project");
+        dialog.setHeaderText("Change the name of the project");
 
-        FXHelper.loadWindow(parentPair.getValue(), "Edit entry", false);
+        dialog.showAndWait().ifPresent(str -> {
+            project.setName(str);
+            DatabaseHelper.saveUpdateProject(project);
+
+            reloadData();
+
+            projectComboBox.getSelectionModel().select(project);
+        });
     }
 
-    private void onDelete(LogEntry logEntry) {
-        DatabaseHelper.deleteLogEntry(logEntry);
-        logHistoryTable.getItems().remove(logEntry);
-        recalculateTotal();
+    private void onDeleteProject(Project project) {
+        if (project == null) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.initOwner(projectActionComboBox.getScene().getWindow());
+            alert.initModality(Modality.WINDOW_MODAL);
+            alert.setHeaderText("No project selected");
+            alert.setContentText("You need to select a project first.");
+            alert.showAndWait();
+            return;
+        }
+
+        boolean projectInUse = logHistoryTable.getItems().stream()
+                .anyMatch(entry -> entry.getProject().equals(project));
+
+        if (projectInUse) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.initOwner(projectActionComboBox.getScene().getWindow());
+            alert.initModality(Modality.WINDOW_MODAL);
+            alert.setHeaderText("Cannot delete project");
+            alert.setContentText("Cannot delete this project because it is being used.");
+            alert.showAndWait();
+        } else {
+            projectComboBox.getSelectionModel().clearSelection();
+            projectComboBox.getItems().remove(project);
+            DatabaseHelper.deleteProject(project);
+        }
     }
 
     private void onLog() {
@@ -173,6 +239,21 @@ public class LogController implements Initializable {
 
         resetForm();
         startTextField.requestFocus();
+    }
+
+    private void onEdit(LogEntry logEntry) {
+        Pair<EditEntryController, Parent> parentPair = FXHelper.loadFxml(EditEntryController.class);
+        EditEntryController controller = parentPair.getKey();
+        controller.setLogController(this);
+        controller.setLogEntry(logEntry);
+
+        FXHelper.loadWindow(parentPair.getValue(), "Edit entry", false);
+    }
+
+    private void onDelete(LogEntry logEntry) {
+        DatabaseHelper.deleteLogEntry(logEntry);
+        logHistoryTable.getItems().remove(logEntry);
+        recalculateTotal();
     }
 
     private void recalculateTotal() {

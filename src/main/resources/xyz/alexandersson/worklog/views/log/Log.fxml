@@ -26,7 +26,7 @@
             <DatePicker fx:id="datePicker" editable="false" prefWidth="150.0"/>
             <HBox prefWidth="150.0" spacing="5.0">
                 <ComboBox fx:id="projectComboBox" prefWidth="150.0" promptText="Select project"/>
-                <Button fx:id="addProject" minWidth="25.0" text="+"/>
+                <ComboBox fx:id="projectActionComboBox" maxWidth="25.0" minWidth="25.0"/>
             </HBox>
             <TextField fx:id="startTextField" prefWidth="150" promptText="Start time"/>
             <TextField fx:id="stopTextField" prefWidth="150" promptText="Stop time"/>
