@@ -31,4 +31,8 @@ public class TotalEntry {
     public void setTotalWork(Double totalWork) {
         this.totalWork = totalWork;
     }
+
+    public Double getRoundedTotalWork() {
+        return Math.round(totalWork * 4) / 4.0;
+    }
 }

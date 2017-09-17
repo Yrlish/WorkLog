@@ -19,6 +19,7 @@ import xyz.alexandersson.worklog.TextFieldTimeChangeListener;
 import xyz.alexandersson.worklog.components.ProjectRowController;
 import xyz.alexandersson.worklog.helpers.DatabaseHelper;
 import xyz.alexandersson.worklog.helpers.FXHelper;
+import xyz.alexandersson.worklog.helpers.TimeHelper;
 import xyz.alexandersson.worklog.models.LogEntry;
 import xyz.alexandersson.worklog.models.Project;
 import xyz.alexandersson.worklog.models.TotalEntry;
@@ -65,7 +66,11 @@ public class LogController implements Initializable {
     @FXML
     private TableColumn<TotalEntry, Project> totalProjectColumn;
     @FXML
-    private TableColumn<TotalEntry, Double> totalWorkColumn;
+    private TableColumn<TotalEntry, Double> totalWorkExactColumn;
+    @FXML
+    private TableColumn<TotalEntry, Double> totalWorkRoundedColumn;
+    @FXML
+    private TableColumn<TotalEntry, Double> totalWorkNonDecimalColumn;
 
     private ListProperty<Project> projects = new SimpleListProperty<>(FXCollections.observableArrayList());
 
@@ -81,7 +86,19 @@ public class LogController implements Initializable {
 
         totalDateColumn.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getDate()));
         totalProjectColumn.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getProject()));
-        totalWorkColumn.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getTotalWork()));
+        totalWorkExactColumn.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getTotalWork()));
+        totalWorkRoundedColumn.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getRoundedTotalWork()));
+        totalWorkNonDecimalColumn.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getTotalWork()));
+        totalWorkNonDecimalColumn.setCellFactory(param -> new TableCell<TotalEntry, Double>() {
+            @Override
+            protected void updateItem(Double item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (item != null || !empty) {
+                    setText(TimeHelper.hourDecimalToString(item));
+                }
+            }
+        });
 
         logHistoryTable.getItems().addListener((ListChangeListener<? super LogEntry>) c -> {
             c.next();
@@ -220,6 +237,7 @@ public class LogController implements Initializable {
         logEntry.setComment(commentArea.getText());
 
         logHistoryTable.getItems().add(logEntry);
+        logHistoryTable.sort();
         DatabaseHelper.saveUpdateLogEntry(logEntry);
 
         recalculateTotal();
@@ -265,6 +283,8 @@ public class LogController implements Initializable {
                 logTotalTable.getItems().add(totalEntry);
             }
         }
+
+        logTotalTable.sort();
     }
 
     private void resetForm() {

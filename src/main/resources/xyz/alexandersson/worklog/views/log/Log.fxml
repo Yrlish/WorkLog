@@ -6,7 +6,7 @@
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/8.0.40"
             fx:controller="xyz.alexandersson.worklog.views.log.LogController"
-            prefHeight="350.0" prefWidth="550.0">
+            prefHeight="400.0" prefWidth="650.0">
     <GridPane hgap="10.0" layoutX="10.0" layoutY="10.0" vgap="10.0" AnchorPane.bottomAnchor="10.0"
               AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
         <columnConstraints>
@@ -28,14 +28,14 @@
             </HBox>
             <TextField fx:id="startTextField" prefWidth="150" promptText="Start time"/>
             <TextField fx:id="stopTextField" prefWidth="150" promptText="Stop time"/>
-            <TextArea fx:id="commentArea" prefWidth="150" promptText="Comments (optional)"/>
+            <TextArea fx:id="commentArea" prefWidth="150" prefHeight="90" promptText="Comments (optional)"/>
             <Button fx:id="logBtn" defaultButton="true" prefWidth="50.0" text="Log"/>
         </VBox>
         <SplitPane orientation="VERTICAL" dividerPositions="0.6" GridPane.columnIndex="1">
             <TableView fx:id="logHistoryTable">
                 <columns>
                     <TableColumn fx:id="historyDateColumn" sortType="DESCENDING" prefWidth="75.0" text="Date"/>
-                    <TableColumn fx:id="historyProjectColumn" prefWidth="75.0" text="Project"/>
+                    <TableColumn fx:id="historyProjectColumn" prefWidth="100.0" text="Project"/>
                     <TableColumn fx:id="historyStartColumn" sortType="DESCENDING" prefWidth="75.0" text="Start"/>
                     <TableColumn fx:id="historyStopColumn" sortType="DESCENDING" prefWidth="75.0" text="Stop"/>
                 </columns>
@@ -43,8 +43,14 @@
             <TableView fx:id="logTotalTable">
                 <columns>
                     <TableColumn fx:id="totalDateColumn" sortType="DESCENDING" prefWidth="75.0" text="Date"/>
-                    <TableColumn fx:id="totalProjectColumn" prefWidth="75.0" text="Project"/>
-                    <TableColumn fx:id="totalWorkColumn" prefWidth="75.0" text="Total work"/>
+                    <TableColumn fx:id="totalProjectColumn" prefWidth="100.0" text="Project"/>
+                    <TableColumn text="Total work">
+                        <columns>
+                            <TableColumn fx:id="totalWorkExactColumn" prefWidth="75.0" text="Exact (h)"/>
+                            <TableColumn fx:id="totalWorkRoundedColumn" prefWidth="80.0" text="Rounded (h)"/>
+                            <TableColumn fx:id="totalWorkNonDecimalColumn" prefWidth="80.0" text="Non-decimal"/>
+                        </columns>
+                    </TableColumn>
                 </columns>
             </TableView>
         </SplitPane>
