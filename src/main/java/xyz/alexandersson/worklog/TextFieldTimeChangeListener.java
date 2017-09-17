@@ -17,7 +17,8 @@ public class TextFieldTimeChangeListener implements ChangeListener<String> {
     @Override
     public void changed(ObservableValue observable, String oldValue, String newValue) {
         if (!newValue.isEmpty() && !newValue.matches("^(00?[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$")) {
-            if (newValue.matches("^(00?[0-9]|1[0-9]|2[0-3])$")) {
+            if (newValue.matches("^(00?[0-9]|1[0-9]|2[0-3])$")
+                    && !oldValue.contains(":")) {
                 textField.setText(newValue + ":");
             }
 
