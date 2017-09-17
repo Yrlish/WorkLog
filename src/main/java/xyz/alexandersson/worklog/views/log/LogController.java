@@ -282,7 +282,7 @@ public class LogController implements Initializable {
 
         if (!startTextField.getText().isEmpty()) {
             try {
-                LocalDate.parse(startTextField.getText());
+                LocalTime.parse(startTextField.getText());
             } catch (DateTimeParseException ex) {
                 LOGGER.error("Cannot parse start time field", ex);
                 showErrorAlert("Log error", "Log error", "Start time is not valid");
@@ -296,7 +296,7 @@ public class LogController implements Initializable {
         // Optional field
         if (!stopTextField.getText().isEmpty()) {
             try {
-                LocalDate.parse(stopTextField.getText());
+                LocalTime.parse(stopTextField.getText());
             } catch (DateTimeParseException ex) {
                 LOGGER.error("Cannot parse stop time field", ex);
                 showErrorAlert("Log error", "Log error", "Stop time is not valid");
