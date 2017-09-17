@@ -4,6 +4,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -66,5 +67,17 @@ public class FXHelper {
         stage.setResizable(resizeable);
 
         stage.show();
+    }
+
+
+    public static void showErrorAlert(String title, String header, String text) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.initModality(Modality.APPLICATION_MODAL);
+
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(text);
+
+        alert.showAndWait();
     }
 }

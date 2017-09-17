@@ -32,13 +32,13 @@ public class ProjectRowController implements Initializable {
             if (newValue != null) {
                 switch (newValue) {
                     case NEW:
-                        logController.onAddProject(projectComboBox.getScene().getWindow());
+                        logController.onAddProject(this, projectComboBox.getScene().getWindow());
                         break;
                     case RENAME:
-                        logController.onEditProject(projectComboBox.getSelectionModel().getSelectedItem(), projectComboBox.getScene().getWindow());
+                        logController.onEditProject(this, projectComboBox.getSelectionModel().getSelectedItem(), projectComboBox.getScene().getWindow());
                         break;
                     case DELETE:
-                        logController.onDeleteProject(projectComboBox.getSelectionModel().getSelectedItem(), projectComboBox.getScene().getWindow());
+                        logController.onDeleteProject(this, projectComboBox.getSelectionModel().getSelectedItem(), projectComboBox.getScene().getWindow());
                         break;
                     default:
                         break;

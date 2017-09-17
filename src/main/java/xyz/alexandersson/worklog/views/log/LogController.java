@@ -29,9 +29,12 @@ import java.net.URL;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
+
+import static xyz.alexandersson.worklog.helpers.FXHelper.showErrorAlert;
 
 public class LogController implements Initializable {
 
@@ -157,7 +160,7 @@ public class LogController implements Initializable {
         recalculateTotal();
     }
 
-    public void onAddProject(Window window) {
+    public void onAddProject(ProjectRowController prc, Window window) {
         TextInputDialog dialog = new TextInputDialog();
         dialog.initOwner(window);
         dialog.initModality(Modality.WINDOW_MODAL);
@@ -170,11 +173,11 @@ public class LogController implements Initializable {
             projects.add(project);
             DatabaseHelper.saveUpdateProject(project);
 
-            projectRowController.select(project);
+            prc.select(project);
         });
     }
 
-    public void onEditProject(Project project, Window window) {
+    public void onEditProject(ProjectRowController prc, Project project, Window window) {
         if (project == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.initOwner(window);
@@ -197,11 +200,11 @@ public class LogController implements Initializable {
 
             reloadData();
 
-            projectRowController.select(project);
+            prc.select(project);
         });
     }
 
-    public void onDeleteProject(Project project, Window window) {
+    public void onDeleteProject(ProjectRowController prc, Project project, Window window) {
         if (project == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.initOwner(window);
@@ -223,27 +226,85 @@ public class LogController implements Initializable {
             alert.setContentText("Cannot delete this project because it is being used.");
             alert.showAndWait();
         } else {
-            projectRowController.clear(project);
-            DatabaseHelper.deleteProject(project);
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.initOwner(window);
+            alert.initModality(Modality.WINDOW_MODAL);
+            alert.setContentText(String.format("Are you sure you want to delete project '%s'?", project.getName()));
+
+            alert.getButtonTypes().clear();
+            alert.getButtonTypes().addAll(ButtonType.YES, ButtonType.NO);
+
+            ((Button) alert.getDialogPane().lookupButton(ButtonType.YES)).setDefaultButton(false);
+            ((Button) alert.getDialogPane().lookupButton(ButtonType.NO)).setDefaultButton(true);
+
+            alert.showAndWait().ifPresent(buttonType -> {
+                if (buttonType == ButtonType.YES) {
+                    prc.clear(project);
+                    DatabaseHelper.deleteProject(project);
+                }
+            });
         }
     }
 
     private void onLog() {
-        LogEntry logEntry = new LogEntry();
-        logEntry.setDate(datePicker.getValue());
-        logEntry.setProject(projectRowController.getProject());
-        logEntry.setStartTime(LocalTime.parse(startTextField.getText()));
-        logEntry.setStopTime(LocalTime.parse(stopTextField.getText()));
-        logEntry.setComment(commentArea.getText());
+        if (validateLogForm()) {
+            LogEntry logEntry = new LogEntry();
+            logEntry.setDate(datePicker.getValue());
+            logEntry.setProject(projectRowController.getProject());
+            logEntry.setStartTime(LocalTime.parse(startTextField.getText()));
+            logEntry.setStopTime(LocalTime.parse(stopTextField.getText()));
+            logEntry.setComment(commentArea.getText());
 
-        logHistoryTable.getItems().add(logEntry);
-        logHistoryTable.sort();
-        DatabaseHelper.saveUpdateLogEntry(logEntry);
+            logHistoryTable.getItems().add(logEntry);
+            logHistoryTable.sort();
+            DatabaseHelper.saveUpdateLogEntry(logEntry);
 
-        recalculateTotal();
+            recalculateTotal();
 
-        resetForm();
-        startTextField.requestFocus();
+            resetForm();
+            startTextField.requestFocus();
+        }
+    }
+
+    private boolean validateLogForm() {
+        if (!datePicker.getValue().isEqual(LocalDate.now())
+                && !datePicker.getValue().isBefore(LocalDate.now())) {
+            // Do not accept dates from the future
+            showErrorAlert("Log error", "Log error", "Can only select today's date and dates from the past");
+            return false;
+        }
+
+        if (projectRowController.getProject() == null) {
+            // No project selected
+            showErrorAlert("Log error", "Log error", "No project selected");
+            return false;
+        }
+
+        if (!startTextField.getText().isEmpty()) {
+            try {
+                LocalDate.parse(startTextField.getText());
+            } catch (DateTimeParseException ex) {
+                LOGGER.error("Cannot parse start time field", ex);
+                showErrorAlert("Log error", "Log error", "Start time is not valid");
+                return false;
+            }
+        } else {
+            showErrorAlert("Log error", "Log error", "Start time is empty");
+            return false;
+        }
+
+        // Optional field
+        if (!stopTextField.getText().isEmpty()) {
+            try {
+                LocalDate.parse(stopTextField.getText());
+            } catch (DateTimeParseException ex) {
+                LOGGER.error("Cannot parse stop time field", ex);
+                showErrorAlert("Log error", "Log error", "Stop time is not valid");
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private void onEdit(LogEntry logEntry) {
@@ -256,9 +317,23 @@ public class LogController implements Initializable {
     }
 
     private void onDelete(LogEntry logEntry) {
-        DatabaseHelper.deleteLogEntry(logEntry);
-        logHistoryTable.getItems().remove(logEntry);
-        recalculateTotal();
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.initModality(Modality.APPLICATION_MODAL);
+        alert.setContentText("Are you sure you want to delete this log entry?");
+
+        alert.getButtonTypes().clear();
+        alert.getButtonTypes().addAll(ButtonType.YES, ButtonType.NO);
+
+        ((Button) alert.getDialogPane().lookupButton(ButtonType.YES)).setDefaultButton(false);
+        ((Button) alert.getDialogPane().lookupButton(ButtonType.NO)).setDefaultButton(true);
+
+        alert.showAndWait().ifPresent(buttonType -> {
+            if (buttonType == ButtonType.YES) {
+                DatabaseHelper.deleteLogEntry(logEntry);
+                logHistoryTable.getItems().remove(logEntry);
+                recalculateTotal();
+            }
+        });
     }
 
     private void recalculateTotal() {

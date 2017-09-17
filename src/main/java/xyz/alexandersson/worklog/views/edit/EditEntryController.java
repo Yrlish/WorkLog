@@ -16,9 +16,13 @@ import xyz.alexandersson.worklog.models.LogEntry;
 import xyz.alexandersson.worklog.views.log.LogController;
 
 import java.net.URL;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ResourceBundle;
+
+import static xyz.alexandersson.worklog.helpers.FXHelper.showErrorAlert;
 
 public class EditEntryController implements Initializable {
     private static Logger LOGGER = LoggerFactory.getLogger(EditEntryController.class);
@@ -44,19 +48,65 @@ public class EditEntryController implements Initializable {
         stopTextField.textProperty().addListener(new TextFieldTimeChangeListener(stopTextField));
 
         saveBtn.setOnAction(event -> {
-            onSave();
-            ((Stage) saveBtn.getScene().getWindow()).close();
+            if (onSave()) {
+                ((Stage) saveBtn.getScene().getWindow()).close();
+            }
         });
     }
 
-    private void onSave() {
-        logEntry.setDate(datePicker.getValue());
-        logEntry.setProject(projectRowController.getProject());
-        logEntry.setStartTime(LocalTime.parse(startTextField.getText()));
-        logEntry.setStopTime(LocalTime.parse(stopTextField.getText()));
-        logEntry.setComment(commentArea.getText());
-        DatabaseHelper.saveUpdateLogEntry(logEntry);
-        logController.reloadTables();
+    private boolean onSave() {
+        if (validateLogForm()) {
+            logEntry.setDate(datePicker.getValue());
+            logEntry.setProject(projectRowController.getProject());
+            logEntry.setStartTime(LocalTime.parse(startTextField.getText()));
+            logEntry.setStopTime(LocalTime.parse(stopTextField.getText()));
+            logEntry.setComment(commentArea.getText());
+            DatabaseHelper.saveUpdateLogEntry(logEntry);
+            logController.reloadTables();
+            return true;
+        }
+        return false;
+    }
+
+    private boolean validateLogForm() {
+        if (!datePicker.getValue().isEqual(LocalDate.now())
+                && !datePicker.getValue().isBefore(LocalDate.now())) {
+            // Do not accept dates from the future
+            showErrorAlert("Log error", "Log error", "Can only select today's date and dates from the past");
+            return false;
+        }
+
+        if (projectRowController.getProject() == null) {
+            // No project selected
+            showErrorAlert("Log error", "Log error", "No project selected");
+            return false;
+        }
+
+        if (!startTextField.getText().isEmpty()) {
+            try {
+                LocalDate.parse(startTextField.getText());
+            } catch (DateTimeParseException ex) {
+                LOGGER.error("Cannot parse start time field", ex);
+                showErrorAlert("Log error", "Log error", "Start time is not valid");
+                return false;
+            }
+        } else {
+            showErrorAlert("Log error", "Log error", "Start time is empty");
+            return false;
+        }
+
+        // Optional field
+        if (!stopTextField.getText().isEmpty()) {
+            try {
+                LocalDate.parse(stopTextField.getText());
+            } catch (DateTimeParseException ex) {
+                LOGGER.error("Cannot parse stop time field", ex);
+                showErrorAlert("Log error", "Log error", "Stop time is not valid");
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private void fill() {
