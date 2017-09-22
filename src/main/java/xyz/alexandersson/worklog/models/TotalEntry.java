@@ -33,6 +33,6 @@ public class TotalEntry {
     }
 
     public Double getRoundedTotalWork() {
-        return Math.round(totalWork * 4) / 4.0;
+        return Math.ceil(totalWork * 4) / 4.0;
     }
 }
