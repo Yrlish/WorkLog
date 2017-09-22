@@ -14,7 +14,7 @@
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
         </columnConstraints>
         <rowConstraints>
-            <RowConstraints minHeight="10.0"/>
+            <RowConstraints minHeight="10.0" vgrow="ALWAYS"/>
         </rowConstraints>
         <VBox alignment="TOP_CENTER" fillWidth="false" spacing="10.0">
             <Label text="WorkLog">
