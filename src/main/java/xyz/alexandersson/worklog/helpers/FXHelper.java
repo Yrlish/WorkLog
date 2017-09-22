@@ -1,10 +1,11 @@
 package xyz.alexandersson.worklog.helpers;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
+import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -79,5 +80,12 @@ public class FXHelper {
         alert.setContentText(text);
 
         alert.showAndWait();
+    }
+
+    public static void addTooltipToTableColumnHeader(TableView table, TableColumn column, Tooltip tooltip) {
+        Platform.runLater(() -> {
+            Label label = (Label) table.lookup("#" + column.getId() + " .label");
+            label.setTooltip(tooltip);
+        });
     }
 }

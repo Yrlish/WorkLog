@@ -4,6 +4,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
@@ -19,6 +20,7 @@ import xyz.alexandersson.worklog.TextFieldTimeChangeListener;
 import xyz.alexandersson.worklog.components.ProjectRowController;
 import xyz.alexandersson.worklog.helpers.DatabaseHelper;
 import xyz.alexandersson.worklog.helpers.FXHelper;
+import xyz.alexandersson.worklog.helpers.StringHelper;
 import xyz.alexandersson.worklog.helpers.TimeHelper;
 import xyz.alexandersson.worklog.models.LogEntry;
 import xyz.alexandersson.worklog.models.Project;
@@ -34,6 +36,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import static xyz.alexandersson.worklog.helpers.FXHelper.addTooltipToTableColumnHeader;
 import static xyz.alexandersson.worklog.helpers.FXHelper.showErrorAlert;
 
 public class LogController implements Initializable {
@@ -63,6 +66,8 @@ public class LogController implements Initializable {
     @FXML
     private TableColumn<LogEntry, LocalTime> historyStopColumn;
     @FXML
+    private TableColumn<LogEntry, String> historyCommentColumn;
+    @FXML
     private TableView<TotalEntry> logTotalTable;
     @FXML
     private TableColumn<TotalEntry, LocalDate> totalDateColumn;
@@ -86,6 +91,21 @@ public class LogController implements Initializable {
         historyProjectColumn.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getProject()));
         historyStartColumn.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getStartTime()));
         historyStopColumn.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getStopTime()));
+        historyCommentColumn.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getComment()));
+        historyCommentColumn.setCellFactory(p -> new TableCell<LogEntry, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (item != null || !empty) {
+                    setText(StringHelper.removeLineBreaks(item));
+                } else {
+                    setText(null);
+                }
+            }
+        });
+        addTooltipToTableColumnHeader(logHistoryTable, historyCommentColumn,
+                new Tooltip("New lines is replaced with |"));
 
         totalDateColumn.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getDate()));
         totalProjectColumn.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getProject()));
@@ -138,6 +158,21 @@ public class LogController implements Initializable {
                             .then(rowMenu)
                             .otherwise((ContextMenu) null));
             return row;
+        });
+
+        logHistoryTable.setOnKeyPressed(event -> {
+            LogEntry logEntry = logHistoryTable.getSelectionModel().getSelectedItem();
+
+            switch (event.getCode()) {
+                case ENTER:
+                    onEdit(logEntry);
+                    break;
+                case DELETE:
+                    onDelete(logEntry);
+                    break;
+                default:
+                    break;
+            }
         });
 
         logHistoryTable.getSortOrder().add(historyDateColumn);
