@@ -15,6 +15,27 @@ repositories {
     mavenCentral()
 }
 
+
+ext.getBuildNumber = { ->
+    if(System.env.BUILD_NUMBER){
+        return System.env.BUILD_NUMBER
+    } else {
+        return "Unofficial"
+    }
+}
+
+shadowJar {
+    manifest {
+        attributes "Implementation-Title": project.name,
+                "Implementation-Version": version,
+                "Build-Number": getBuildNumber()
+    }
+
+    baseName = project.name
+    classifier = null
+    version = null
+}
+
 dependencies {
     compile group: 'org.jetbrains', name: 'annotations', version: '15.0'
 

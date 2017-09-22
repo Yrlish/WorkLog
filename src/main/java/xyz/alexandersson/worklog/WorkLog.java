@@ -26,7 +26,7 @@ public class WorkLog extends Application {
         primaryStage.setMinHeight(400);
         primaryStage.setMinWidth(600);
 
-        primaryStage.setTitle(String.format("WorkLog %s", VERSION));
+        primaryStage.setTitle(String.format("WorkLog %s (build %s)", AppVersion.getVersion(), AppVersion.getBuildNumber()));
         primaryStage.setScene(scene);
         primaryStage.show();
         LOGGER.info("Application started");
