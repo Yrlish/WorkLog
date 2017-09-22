@@ -2,18 +2,15 @@ package xyz.alexandersson.worklog.views.log;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.stage.Modality;
-import javafx.stage.Window;
 import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +23,7 @@ import xyz.alexandersson.worklog.helpers.TimeHelper;
 import xyz.alexandersson.worklog.models.LogEntry;
 import xyz.alexandersson.worklog.models.Project;
 import xyz.alexandersson.worklog.models.TotalEntry;
+import xyz.alexandersson.worklog.services.ProjectService;
 import xyz.alexandersson.worklog.views.about.AboutController;
 import xyz.alexandersson.worklog.views.edit.EditEntryController;
 
@@ -90,7 +88,7 @@ public class LogController implements Initializable {
     @FXML
     private TableColumn<TotalEntry, Double> totalWorkNonDecimalColumn;
 
-    private ListProperty<Project> projects = new SimpleListProperty<>(FXCollections.observableArrayList());
+    private ProjectService projectService = new ProjectService(this);
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -208,100 +206,6 @@ public class LogController implements Initializable {
         logBtn.setOnAction(event -> onLog());
 
         reloadData();
-    }
-
-    private void reloadData() {
-        projects.clear();
-        projects.addAll(DatabaseHelper.getProjects());
-        logHistoryTable.getItems().clear();
-        logHistoryTable.getItems().addAll(DatabaseHelper.getLogEntries());
-        recalculateTotal();
-    }
-
-    public void onAddProject(ProjectRowController prc, Window window) {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.initOwner(window);
-        dialog.initModality(Modality.WINDOW_MODAL);
-        dialog.setTitle("New project");
-        dialog.setHeaderText("Name of the new project");
-
-        dialog.showAndWait().ifPresent(str -> {
-            Project project = new Project(str);
-
-            projects.add(project);
-            DatabaseHelper.saveUpdateProject(project);
-
-            prc.select(project);
-        });
-    }
-
-    public void onEditProject(ProjectRowController prc, Project project, Window window) {
-        if (project == null) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.initOwner(window);
-            alert.initModality(Modality.WINDOW_MODAL);
-            alert.setHeaderText("No project selected");
-            alert.setContentText("You need to select a project first.");
-            alert.showAndWait();
-            return;
-        }
-
-        TextInputDialog dialog = new TextInputDialog(project.getName());
-        dialog.initOwner(window);
-        dialog.initModality(Modality.WINDOW_MODAL);
-        dialog.setTitle("Edit project");
-        dialog.setHeaderText("Change the name of the project");
-
-        dialog.showAndWait().ifPresent(str -> {
-            project.setName(str);
-            DatabaseHelper.saveUpdateProject(project);
-
-            reloadData();
-
-            prc.select(project);
-        });
-    }
-
-    public void onDeleteProject(ProjectRowController prc, Project project, Window window) {
-        if (project == null) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.initOwner(window);
-            alert.initModality(Modality.WINDOW_MODAL);
-            alert.setHeaderText("No project selected");
-            alert.setContentText("You need to select a project first.");
-            alert.showAndWait();
-            return;
-        }
-
-        boolean projectInUse = logHistoryTable.getItems().stream()
-                .anyMatch(entry -> entry.getProject().equals(project));
-
-        if (projectInUse) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.initOwner(window);
-            alert.initModality(Modality.WINDOW_MODAL);
-            alert.setHeaderText("Cannot delete project");
-            alert.setContentText("Cannot delete this project because it is being used.");
-            alert.showAndWait();
-        } else {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.initOwner(window);
-            alert.initModality(Modality.WINDOW_MODAL);
-            alert.setContentText(String.format("Are you sure you want to delete project '%s'?", project.getName()));
-
-            alert.getButtonTypes().clear();
-            alert.getButtonTypes().addAll(ButtonType.YES, ButtonType.NO);
-
-            ((Button) alert.getDialogPane().lookupButton(ButtonType.YES)).setDefaultButton(false);
-            ((Button) alert.getDialogPane().lookupButton(ButtonType.NO)).setDefaultButton(true);
-
-            alert.showAndWait().ifPresent(buttonType -> {
-                if (buttonType == ButtonType.YES) {
-                    prc.clear(project);
-                    DatabaseHelper.deleteProject(project);
-                }
-            });
-        }
     }
 
     private void onLog() {
@@ -431,7 +335,18 @@ public class LogController implements Initializable {
         recalculateTotal();
     }
 
-    public ListProperty<Project> projectsProperty() {
-        return projects;
+    public void reloadData() {
+        projectService.reload();
+        logHistoryTable.getItems().clear();
+        logHistoryTable.getItems().addAll(DatabaseHelper.getLogEntries());
+        recalculateTotal();
+    }
+
+    public ProjectService getProjectService() {
+        return projectService;
+    }
+
+    public ObservableList<LogEntry> getLogEntries() {
+        return logHistoryTable.getItems();
     }
 }

@@ -6,6 +6,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
 import xyz.alexandersson.worklog.models.Project;
 import xyz.alexandersson.worklog.models.ProjectAction;
+import xyz.alexandersson.worklog.services.ProjectService;
 import xyz.alexandersson.worklog.views.log.LogController;
 
 import java.net.URL;
@@ -25,20 +26,21 @@ public class ProjectRowController implements Initializable {
     }
 
     public void init() {
-        projectComboBox.itemsProperty().bind(logController.projectsProperty());
+        ProjectService projectService = logController.getProjectService();
+        projectComboBox.itemsProperty().bind(projectService.projectsProperty());
 
         projectActionComboBox.getItems().addAll(NEW, RENAME, DELETE);
         projectActionComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 switch (newValue) {
                     case NEW:
-                        logController.onAddProject(this, projectComboBox.getScene().getWindow());
+                        projectService.onAddProject(this, projectComboBox.getScene().getWindow());
                         break;
                     case RENAME:
-                        logController.onEditProject(this, projectComboBox.getSelectionModel().getSelectedItem(), projectComboBox.getScene().getWindow());
+                        projectService.onEditProject(this, projectComboBox.getSelectionModel().getSelectedItem(), projectComboBox.getScene().getWindow());
                         break;
                     case DELETE:
-                        logController.onDeleteProject(this, projectComboBox.getSelectionModel().getSelectedItem(), projectComboBox.getScene().getWindow());
+                        projectService.onDeleteProject(this, projectComboBox.getSelectionModel().getSelectedItem(), projectComboBox.getScene().getWindow());
                         break;
                     default:
                         break;
