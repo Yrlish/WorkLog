@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage("Build") {
             steps {
-                sh 'gradle shadowJar'
+                sh 'gradlew shadowJar'
             }
         }
 
