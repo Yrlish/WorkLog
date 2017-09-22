@@ -2,6 +2,13 @@ pipeline {
     agent any
 
     stages {
+        stage("Versions") {
+            steps {
+                sh './gradlew -v'
+                sh 'java -version'
+            }
+        }
+
         stage("Build") {
             steps {
                 sh './gradlew shadowJar'
