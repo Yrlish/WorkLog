@@ -59,7 +59,9 @@ public class EditEntryController implements Initializable {
             logEntry.setDate(datePicker.getValue());
             logEntry.setProject(projectRowController.getProject());
             logEntry.setStartTime(LocalTime.parse(startTextField.getText()));
-            logEntry.setStopTime(LocalTime.parse(stopTextField.getText()));
+            if (!stopTextField.getText().isEmpty()) {
+                logEntry.setStopTime(LocalTime.parse(stopTextField.getText()));
+            }
             logEntry.setComment(commentArea.getText());
             DatabaseHelper.saveUpdateLogEntry(logEntry);
             logController.reloadTables();
@@ -113,7 +115,9 @@ public class EditEntryController implements Initializable {
         datePicker.setValue(logEntry.getDate());
         projectRowController.select(logEntry.getProject());
         startTextField.setText(logEntry.getStartTime().format(DateTimeFormatter.ofPattern("HH:mm")));
-        stopTextField.setText(logEntry.getStopTime().format(DateTimeFormatter.ofPattern("HH:mm")));
+        if (logEntry.getStopTime() != null) {
+            stopTextField.setText(logEntry.getStopTime().format(DateTimeFormatter.ofPattern("HH:mm")));
+        }
         commentArea.setText(logEntry.getComment());
     }
 

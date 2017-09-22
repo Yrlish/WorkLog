@@ -214,7 +214,9 @@ public class LogController implements Initializable {
             logEntry.setDate(datePicker.getValue());
             logEntry.setProject(projectRowController.getProject());
             logEntry.setStartTime(LocalTime.parse(startTextField.getText()));
-            logEntry.setStopTime(LocalTime.parse(stopTextField.getText()));
+            if (!stopTextField.getText().isEmpty()) {
+                logEntry.setStopTime(LocalTime.parse(stopTextField.getText()));
+            }
             logEntry.setComment(commentArea.getText());
 
             logHistoryTable.getItems().add(logEntry);
@@ -303,6 +305,10 @@ public class LogController implements Initializable {
         Map<LocalDate, Map<Project, Double>> map = new HashMap<>();
 
         for (LogEntry logEntry : logHistoryTable.getItems()) {
+            if (logEntry.getStopTime() == null) {
+                continue;
+            }
+
             Duration duration = Duration.between(logEntry.getStartTime(), logEntry.getStopTime());
             double hrs = duration.getSeconds() / 60.0 / 60.0;
 

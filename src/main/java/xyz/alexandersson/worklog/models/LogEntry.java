@@ -2,6 +2,7 @@ package xyz.alexandersson.worklog.models;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
+import org.jetbrains.annotations.Nullable;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -55,6 +56,7 @@ public class LogEntry {
         this.startTime = startTime;
     }
 
+    @Nullable
     public LocalTime getStopTime() {
         return stopTime;
     }

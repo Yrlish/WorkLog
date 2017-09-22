@@ -37,7 +37,7 @@
                 <fx:include fx:id="projectRow" source="../../components/ProjectRow.fxml"/>
             </HBox>
             <TextField fx:id="startTextField" prefWidth="150" promptText="Start time"/>
-            <TextField fx:id="stopTextField" prefWidth="150" promptText="Stop time"/>
+            <TextField fx:id="stopTextField" prefWidth="150" promptText="Stop time (optional)"/>
             <TextArea fx:id="commentArea" prefWidth="150" prefHeight="90" promptText="Comments (optional)"/>
             <Button fx:id="logBtn" defaultButton="true" prefWidth="50.0" text="Log"/>
         </VBox>
