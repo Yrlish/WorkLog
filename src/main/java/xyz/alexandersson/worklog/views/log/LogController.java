@@ -1,5 +1,6 @@
 package xyz.alexandersson.worklog.views.log;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
@@ -25,6 +26,7 @@ import xyz.alexandersson.worklog.helpers.TimeHelper;
 import xyz.alexandersson.worklog.models.LogEntry;
 import xyz.alexandersson.worklog.models.Project;
 import xyz.alexandersson.worklog.models.TotalEntry;
+import xyz.alexandersson.worklog.views.about.AboutController;
 import xyz.alexandersson.worklog.views.edit.EditEntryController;
 
 import java.net.URL;
@@ -43,6 +45,14 @@ public class LogController implements Initializable {
 
     private static Logger LOGGER = LoggerFactory.getLogger(LogController.class);
 
+    @FXML
+    private MenuItem exportMenuItem;
+    @FXML
+    private MenuItem settingsMenuItem;
+    @FXML
+    private MenuItem exitMenuItem;
+    @FXML
+    private MenuItem aboutMenuItem;
     @FXML
     private DatePicker datePicker;
     @FXML
@@ -84,6 +94,17 @@ public class LogController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        settingsMenuItem.setOnAction(event -> {
+
+        });
+        exitMenuItem.setOnAction(event -> {
+            Platform.exit();
+        });
+        aboutMenuItem.setOnAction(event -> {
+            Pair<AboutController, Parent> about = FXHelper.loadFxml(AboutController.class);
+            FXHelper.loadWindow(about.getValue(), "About", logHistoryTable.getScene().getWindow(), false);
+        });
+
         startTextField.textProperty().addListener(new TextFieldTimeChangeListener(startTextField));
         stopTextField.textProperty().addListener(new TextFieldTimeChangeListener(stopTextField));
 

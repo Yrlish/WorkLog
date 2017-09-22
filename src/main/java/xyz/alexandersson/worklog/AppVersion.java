@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -16,6 +18,7 @@ public class AppVersion {
 
     private static String version = "Unknown";
     private static String buildNumber = "Unofficial";
+    private static ZonedDateTime buildTime;
 
     private static void load() {
         if (loaded) {
@@ -28,6 +31,7 @@ public class AppVersion {
 
             version = manifest.getMainAttributes().getValue(Attributes.Name.IMPLEMENTATION_VERSION);
             buildNumber = manifest.getMainAttributes().getValue("Build-Number");
+            buildTime = ZonedDateTime.parse(manifest.getMainAttributes().getValue("Build-Time"), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ"));
 
             loaded = true;
         } catch (IOException ex) {
@@ -43,5 +47,10 @@ public class AppVersion {
     public static String getBuildNumber() {
         load();
         return buildNumber;
+    }
+
+    public static ZonedDateTime getBuildTime() {
+        load();
+        return buildTime;
     }
 }
