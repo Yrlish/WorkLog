@@ -6,7 +6,7 @@ RELEASE_DIR=$(mktemp -d)
 VERSION=$(cat ${WORKSPACE_DIR}/build.gradle | grep "version '" | awk '{print $2}' | tr -d \')
 
 mkdir "${RELEASE_DIR}/WorkLog ${VERSION}"
-cp ${WORKSPACE_DIR}/build/libs/WorkLog-*-all.jar "${RELEASE_DIR}/WorkLog ${VERSION}/WorkLog.jar"
+cp ${WORKSPACE_DIR}/build/libs/WorkLog.jar "${RELEASE_DIR}/WorkLog ${VERSION}/"
 cp ${WORKSPACE_DIR}/ReleaseFiles/* ${RELEASE_DIR}
 
 cd ${RELEASE_DIR}
