@@ -1,0 +1,17 @@
+Release Notes - WorkLog - Version 0.3
+
+** New Feature
+    * [WL-2] - Editable entries
+    * [WL-3] - Show comments somehow
+    * [WL-15] - Delete entries
+    * [WL-16] - Update and remove projects
+
+
+** Improvement
+    * [WL-5] - Add version string to main window title
+    * [WL-6] - Put the TableViews in a SplitPane
+
+
+** Bug
+    * [WL-7] - Sort by date in total work tableview is wrong
+    * [WL-14] - Bad input in fields causes exceptions
