@@ -99,6 +99,8 @@ public class LogController implements Initializable {
 
                 if (item != null || !empty) {
                     setText(TimeHelper.hourDecimalToString(item));
+                } else {
+                    setText(null);
                 }
             }
         });
