@@ -100,7 +100,14 @@ public class EditEntryController implements Initializable {
         // Optional field
         if (!stopTextField.getText().isEmpty()) {
             try {
-                LocalTime.parse(stopTextField.getText());
+                LocalTime stop = LocalTime.parse(stopTextField.getText());
+
+                LocalTime start = LocalTime.parse(startTextField.getText());
+
+                if (stop.isBefore(start)) {
+                    showErrorAlert("Log error", "Log error", "Cannot set stop time before start time");
+                    return false;
+                }
             } catch (DateTimeParseException ex) {
                 LOGGER.error("Cannot parse stop time field", ex);
                 showErrorAlert("Log error", "Log error", "Stop time is not valid");
