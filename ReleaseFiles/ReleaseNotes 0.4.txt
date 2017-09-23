@@ -16,7 +16,3 @@ Release Notes - WorkLog - Version 0.4
     * [WL-22] - Non-decimal tablecell gets filled with old values
     * [WL-23] - Rounded total should be rounded upwards to the nearest quarter
     * [WL-24] - SplitPane not filling height of window when maximized
-
-
-
-
