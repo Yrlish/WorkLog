@@ -10,7 +10,7 @@
     <MenuBar AnchorPane.leftAnchor="0" AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0">
         <Menu text="File">
             <MenuItem fx:id="exportMenuItem" text="Export..." disable="true"/>
-            <MenuItem fx:id="settingsMenuItem" text="Settings"/>
+            <MenuItem fx:id="settingsMenuItem" text="Settings" disable="true"/>
             <MenuItem fx:id="exitMenuItem" text="Exit"/>
         </Menu>
         <Menu text="Help">
