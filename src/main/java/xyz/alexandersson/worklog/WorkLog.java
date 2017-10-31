@@ -1,6 +1,7 @@
 package xyz.alexandersson.worklog;
 
 import javafx.application.Application;
+import javafx.application.HostServices;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -15,10 +16,23 @@ public class WorkLog extends Application {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkLog.class);
 
-    private static final String VERSION = "0.3";
+    private static HostServices hostServices;
+
+    public static HostServices getApplicationHostServices() {
+        return hostServices;
+    }
+
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+        DatabaseHelper.closeSessionFactory();
+        LOGGER.info("Application stopped");
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        hostServices = getHostServices();
+
         Pair<LogController, Parent> fxml = FXHelper.loadFxml(LogController.class);
 
         Scene scene = new Scene(fxml.getValue());
@@ -30,12 +44,5 @@ public class WorkLog extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
         LOGGER.info("Application started");
-    }
-
-    @Override
-    public void stop() throws Exception {
-        super.stop();
-        DatabaseHelper.closeSessionFactory();
-        LOGGER.info("Application stopped");
     }
 }
