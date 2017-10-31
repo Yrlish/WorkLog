@@ -38,7 +38,8 @@
             </HBox>
             <TextField fx:id="startTextField" prefWidth="150" promptText="Start time"/>
             <TextField fx:id="stopTextField" prefWidth="150" promptText="Stop time (optional)"/>
-            <TextArea fx:id="commentArea" prefWidth="150" prefHeight="90" promptText="Comments (optional)"/>
+            <TextArea fx:id="commentArea" prefWidth="150" prefHeight="90" wrapText="true"
+                      promptText="Comments (optional)"/>
             <Button fx:id="logBtn" defaultButton="true" prefWidth="50.0" text="Log"/>
         </VBox>
         <SplitPane orientation="VERTICAL" dividerPositions="0.6" GridPane.columnIndex="1">

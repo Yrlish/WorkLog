@@ -36,7 +36,7 @@
         </VBox>
         <VBox>
             <Label text="Comments (optional)"/>
-            <TextArea fx:id="commentArea" prefHeight="60.0"/>
+            <TextArea fx:id="commentArea" wrapText="true" prefHeight="60.0"/>
         </VBox>
         <Button fx:id="saveBtn" defaultButton="true" text="Save"/>
     </VBox>
