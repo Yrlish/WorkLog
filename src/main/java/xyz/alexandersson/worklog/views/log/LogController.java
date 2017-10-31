@@ -344,6 +344,7 @@ public class LogController implements Initializable {
     }
 
     public void reloadTables() {
+        logHistoryTable.sort();
         logHistoryTable.refresh();
         recalculateTotal();
     }
