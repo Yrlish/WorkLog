@@ -17,7 +17,7 @@ import xyz.alexandersson.worklog.models.Project;
 import xyz.alexandersson.worklog.views.log.LogController;
 
 public class ProjectService {
-    private static Logger LOGGER = LoggerFactory.getLogger(ProjectService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProjectService.class);
 
     private static ReadOnlyListProperty<Project> projects = new ReadOnlyListWrapper<>(FXCollections.observableArrayList());
 

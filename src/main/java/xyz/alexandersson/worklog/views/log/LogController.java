@@ -42,7 +42,7 @@ import static xyz.alexandersson.worklog.helpers.FXHelper.showErrorAlert;
 
 public class LogController implements Initializable {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(LogController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LogController.class);
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.00");
 
     @FXML

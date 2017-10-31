@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseHelper {
-    private static Logger LOGGER = LoggerFactory.getLogger(DatabaseHelper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseHelper.class);
 
     private static SessionFactory sessionFactory = new Configuration().configure("/hibernate.cfg.xml").buildSessionFactory();
 

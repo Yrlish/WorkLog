@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.ResourceBundle;
 
 public class AboutController implements Initializable {
-    private static Logger LOGGER = LoggerFactory.getLogger(AboutController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AboutController.class);
 
     @FXML
     private TextArea textArea;

@@ -20,7 +20,7 @@ import java.net.URL;
 
 public class FXHelper {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(FXHelper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FXHelper.class);
 
     /**
      * Loads an FXML file, filename and location is based of the provided controller class.

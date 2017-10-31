@@ -13,7 +13,7 @@ import xyz.alexandersson.worklog.views.log.LogController;
 
 public class WorkLog extends Application {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(WorkLog.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WorkLog.class);
 
     private static final String VERSION = "0.3";
 

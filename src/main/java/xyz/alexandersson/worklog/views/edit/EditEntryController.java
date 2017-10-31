@@ -25,7 +25,7 @@ import java.util.ResourceBundle;
 import static xyz.alexandersson.worklog.helpers.FXHelper.showErrorAlert;
 
 public class EditEntryController implements Initializable {
-    private static Logger LOGGER = LoggerFactory.getLogger(EditEntryController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EditEntryController.class);
     @FXML
     private DatePicker datePicker;
     @FXML

@@ -12,7 +12,7 @@ import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
 public class AppVersion {
-    private static Logger LOGGER = LoggerFactory.getLogger(AppVersion.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AppVersion.class);
 
     private static boolean loaded = false;
 
