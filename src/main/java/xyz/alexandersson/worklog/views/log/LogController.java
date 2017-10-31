@@ -28,6 +28,7 @@ import xyz.alexandersson.worklog.views.about.AboutController;
 import xyz.alexandersson.worklog.views.edit.EditEntryController;
 
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -42,6 +43,7 @@ import static xyz.alexandersson.worklog.helpers.FXHelper.showErrorAlert;
 public class LogController implements Initializable {
 
     private static Logger LOGGER = LoggerFactory.getLogger(LogController.class);
+    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.00");
 
     @FXML
     private MenuItem exportMenuItem;
@@ -82,9 +84,7 @@ public class LogController implements Initializable {
     @FXML
     private TableColumn<TotalEntry, Project> totalProjectColumn;
     @FXML
-    private TableColumn<TotalEntry, Double> totalWorkExactColumn;
-    @FXML
-    private TableColumn<TotalEntry, Double> totalWorkRoundedColumn;
+    private TableColumn<TotalEntry, Double> totalWorkDecimalColumn;
     @FXML
     private TableColumn<TotalEntry, Double> totalWorkNonDecimalColumn;
 
@@ -128,8 +128,19 @@ public class LogController implements Initializable {
 
         totalDateColumn.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getDate()));
         totalProjectColumn.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getProject()));
-        totalWorkExactColumn.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getTotalWork()));
-        totalWorkRoundedColumn.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getRoundedTotalWork()));
+        totalWorkDecimalColumn.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getTotalWork()));
+        totalWorkDecimalColumn.setCellFactory(param -> new TableCell<TotalEntry, Double>() {
+            @Override
+            protected void updateItem(Double item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (item != null || !empty) {
+                    setText(DECIMAL_FORMAT.format(item));
+                } else {
+                    setText(null);
+                }
+            }
+        });
         totalWorkNonDecimalColumn.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getTotalWork()));
         totalWorkNonDecimalColumn.setCellFactory(param -> new TableCell<TotalEntry, Double>() {
             @Override

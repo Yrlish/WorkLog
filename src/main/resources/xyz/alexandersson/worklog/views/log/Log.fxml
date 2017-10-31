@@ -58,8 +58,7 @@
                     <TableColumn fx:id="totalProjectColumn" prefWidth="100.0" text="Project"/>
                     <TableColumn text="Total work">
                         <columns>
-                            <TableColumn fx:id="totalWorkExactColumn" prefWidth="75.0" text="Exact (h)"/>
-                            <TableColumn fx:id="totalWorkRoundedColumn" prefWidth="80.0" text="Rounded (h)"/>
+                            <TableColumn fx:id="totalWorkDecimalColumn" prefWidth="80.0" text="Decimal (h)"/>
                             <TableColumn fx:id="totalWorkNonDecimalColumn" prefWidth="80.0" text="Non-decimal"/>
                         </columns>
                     </TableColumn>
