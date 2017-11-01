@@ -50,6 +50,7 @@ import xyz.alexandersson.worklog.models.TotalEntry;
 import xyz.alexandersson.worklog.services.ProjectService;
 import xyz.alexandersson.worklog.views.about.AboutController;
 import xyz.alexandersson.worklog.views.edit.EditEntryController;
+import xyz.alexandersson.worklog.views.overview.DayOverviewController;
 
 import java.net.URL;
 import java.text.DecimalFormat;
@@ -61,13 +62,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import static xyz.alexandersson.worklog.helpers.FXHelper.addTooltipToTableColumnHeader;
-import static xyz.alexandersson.worklog.helpers.FXHelper.showErrorAlert;
+import static xyz.alexandersson.worklog.helpers.FXHelper.*;
 
 public class LogController implements Initializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LogController.class);
-    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.00");
+    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0.00");
 
     @FXML
     private MenuItem exportMenuItem;
@@ -113,6 +113,7 @@ public class LogController implements Initializable {
     private TableColumn<TotalEntry, Double> totalWorkNonDecimalColumn;
 
     private ProjectService projectService = new ProjectService(this);
+    private Map<LocalDate, Map<Project, Double>> logTotalMap;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -211,6 +212,21 @@ public class LogController implements Initializable {
                     Bindings.when(Bindings.isNotNull(row.itemProperty()))
                             .then(rowMenu)
                             .otherwise((ContextMenu) null));
+            return row;
+        });
+
+        logTotalTable.setRowFactory(tableView -> {
+            final TableRow<TotalEntry> row = new TableRow<>();
+
+            row.setOnMousePressed(event -> {
+                TotalEntry selectedItem = row.getItem();
+                if (event.isPrimaryButtonDown()
+                        && event.getClickCount() == 2
+                        && row.getItem() != null) {
+                    onOpenDayOverview(selectedItem.getDate());
+                }
+            });
+
             return row;
         });
 
@@ -342,9 +358,18 @@ public class LogController implements Initializable {
         });
     }
 
+    private void onOpenDayOverview(LocalDate date) {
+        Pair<DayOverviewController, Parent> parentPair = FXHelper.loadFxml(DayOverviewController.class);
+        DayOverviewController controller = parentPair.getKey();
+        controller.setTotalEntryMap(logTotalMap);
+        controller.loadDate(date);
+
+        loadWindow(parentPair.getValue(), "Day Overview", logTotalTable.getScene().getWindow(), false);
+    }
+
     private void recalculateTotal() {
         logTotalTable.getItems().clear();
-        Map<LocalDate, Map<Project, Double>> map = new HashMap<>();
+        logTotalMap = new HashMap<>();
 
         for (LogEntry logEntry : logHistoryTable.getItems()) {
             if (logEntry.getStopTime() == null) {
@@ -354,12 +379,12 @@ public class LogController implements Initializable {
             Duration duration = Duration.between(logEntry.getStartTime(), logEntry.getStopTime());
             double hrs = duration.getSeconds() / 60.0 / 60.0;
 
-            Map<Project, Double> map2 = map.getOrDefault(logEntry.getDate(), new HashMap<>());
+            Map<Project, Double> map2 = logTotalMap.getOrDefault(logEntry.getDate(), new HashMap<>());
             map2.put(logEntry.getProject(), map2.getOrDefault(logEntry.getProject(), 0D) + hrs);
-            map.put(logEntry.getDate(), map2);
+            logTotalMap.put(logEntry.getDate(), map2);
         }
 
-        for (Map.Entry<LocalDate, Map<Project, Double>> entry : map.entrySet()) {
+        for (Map.Entry<LocalDate, Map<Project, Double>> entry : logTotalMap.entrySet()) {
             for (Map.Entry<Project, Double> entry2 : entry.getValue().entrySet()) {
                 TotalEntry totalEntry = new TotalEntry();
                 totalEntry.setDate(entry.getKey());
