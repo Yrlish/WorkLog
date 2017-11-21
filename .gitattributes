@@ -1,3 +1,2 @@
-/ReleaseFiles/* text eol=crlf
-/ReleaseFiles/* text eol=lf
-
+/ReleaseFiles/*.txt eol=crlf
+/ReleaseFiles/*.txt eol=lf
