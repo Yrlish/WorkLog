@@ -116,6 +116,7 @@ public class DayOverviewController implements Initializable {
         dateLabel.setText(date.toString());
         previousDay = date.minusDays(1);
         nextDay = date.plusDays(1);
+        double totalDayWork = 0;
 
         for (Map.Entry<LocalDate, Map<Project, Double>> entry : totalEntryMap.entrySet()) {
             for (Map.Entry<Project, Double> entry2 : entry.getValue().entrySet()) {
@@ -125,10 +126,16 @@ public class DayOverviewController implements Initializable {
                 totalEntry.setTotalWork(entry2.getValue());
 
                 if (totalEntry.getDate().isEqual(date)) {
+                    totalDayWork += entry2.getValue();
                     dayOverviewTable.getItems().add(totalEntry);
                 }
             }
         }
+
+        TotalEntry totalDay = new TotalEntry();
+        totalDay.setProject(new Project("-- TOTAL WORK OF DAY"));
+        totalDay.setTotalWork(totalDayWork);
+        dayOverviewTable.getItems().add(totalDay);
 
         dayOverviewTable.sort();
     }
