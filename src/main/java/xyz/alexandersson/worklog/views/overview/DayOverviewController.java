@@ -12,13 +12,17 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import xyz.alexandersson.worklog.helpers.TimeHelper;
+import xyz.alexandersson.worklog.components.DecimalTableCell;
+import xyz.alexandersson.worklog.components.NonDecimalTableCell;
 import xyz.alexandersson.worklog.models.Project;
 import xyz.alexandersson.worklog.models.TotalEntry;
 
@@ -57,31 +61,9 @@ public class DayOverviewController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         projectColumn.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getProject()));
         decimalColumn.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getTotalWork()));
-        decimalColumn.setCellFactory(param -> new TableCell<TotalEntry, Double>() {
-            @Override
-            protected void updateItem(Double item, boolean empty) {
-                super.updateItem(item, empty);
-
-                if (item != null || !empty) {
-                    setText(DECIMAL_FORMAT.format(item));
-                } else {
-                    setText(null);
-                }
-            }
-        });
+        decimalColumn.setCellFactory(param -> new DecimalTableCell<>());
         nonDecimalColumn.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getTotalWork()));
-        nonDecimalColumn.setCellFactory(param -> new TableCell<TotalEntry, Double>() {
-            @Override
-            protected void updateItem(Double item, boolean empty) {
-                super.updateItem(item, empty);
-
-                if (item != null || !empty) {
-                    setText(TimeHelper.hourDecimalToString(item));
-                } else {
-                    setText(null);
-                }
-            }
-        });
+        nonDecimalColumn.setCellFactory(param -> new NonDecimalTableCell<>());
 
         dayOverviewTable.getSortOrder().clear();
         dayOverviewTable.getSortOrder().add(projectColumn);

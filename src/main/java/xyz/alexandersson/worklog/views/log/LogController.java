@@ -23,11 +23,12 @@ import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.alexandersson.worklog.TextFieldTimeChangeListener;
+import xyz.alexandersson.worklog.components.CommentTableCell;
+import xyz.alexandersson.worklog.components.DecimalTableCell;
+import xyz.alexandersson.worklog.components.NonDecimalTableCell;
 import xyz.alexandersson.worklog.components.ProjectRowController;
 import xyz.alexandersson.worklog.helpers.DatabaseHelper;
 import xyz.alexandersson.worklog.helpers.FXHelper;
-import xyz.alexandersson.worklog.helpers.StringHelper;
-import xyz.alexandersson.worklog.helpers.TimeHelper;
 import xyz.alexandersson.worklog.models.LogEntry;
 import xyz.alexandersson.worklog.models.Project;
 import xyz.alexandersson.worklog.models.TotalEntry;
@@ -101,12 +102,7 @@ public class LogController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        settingsMenuItem.setOnAction(event -> {
-
-        });
-        exitMenuItem.setOnAction(event -> {
-            Platform.exit();
-        });
+        exitMenuItem.setOnAction(event -> Platform.exit());
         aboutMenuItem.setOnAction(event -> {
             Pair<AboutController, Parent> about = FXHelper.loadFxml(AboutController.class);
             FXHelper.loadWindow(about.getValue(), "About", logHistoryTable.getScene().getWindow(), false);
@@ -120,49 +116,16 @@ public class LogController implements Initializable {
         historyStartColumn.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getStartTime()));
         historyStopColumn.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getStopTime()));
         historyCommentColumn.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getComment()));
-        historyCommentColumn.setCellFactory(p -> new TableCell<LogEntry, String>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-
-                if (item != null || !empty) {
-                    setText(StringHelper.removeLineBreaks(item));
-                } else {
-                    setText(null);
-                }
-            }
-        });
+        historyCommentColumn.setCellFactory(p -> new CommentTableCell<>());
         addTooltipToTableColumnHeader(logHistoryTable, historyCommentColumn,
                 new Tooltip("New lines is replaced with |"));
 
         totalDateColumn.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getDate()));
         totalProjectColumn.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getProject()));
         totalWorkDecimalColumn.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getTotalWork()));
-        totalWorkDecimalColumn.setCellFactory(param -> new TableCell<TotalEntry, Double>() {
-            @Override
-            protected void updateItem(Double item, boolean empty) {
-                super.updateItem(item, empty);
-
-                if (item != null || !empty) {
-                    setText(DECIMAL_FORMAT.format(item));
-                } else {
-                    setText(null);
-                }
-            }
-        });
+        totalWorkDecimalColumn.setCellFactory(param -> new DecimalTableCell<>());
         totalWorkNonDecimalColumn.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getTotalWork()));
-        totalWorkNonDecimalColumn.setCellFactory(param -> new TableCell<TotalEntry, Double>() {
-            @Override
-            protected void updateItem(Double item, boolean empty) {
-                super.updateItem(item, empty);
-
-                if (item != null || !empty) {
-                    setText(TimeHelper.hourDecimalToString(item));
-                } else {
-                    setText(null);
-                }
-            }
-        });
+        totalWorkNonDecimalColumn.setCellFactory(param -> new NonDecimalTableCell<>());
 
         logHistoryTable.getItems().addListener((ListChangeListener<? super LogEntry>) c -> {
             c.next();
@@ -239,6 +202,8 @@ public class LogController implements Initializable {
             switch (event.getCode()) {
                 case ENTER:
                     onOpenDayOverview(totalEntry.getDate());
+                    break;
+                default:
                     break;
             }
         });
