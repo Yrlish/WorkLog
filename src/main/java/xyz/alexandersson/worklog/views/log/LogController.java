@@ -38,7 +38,6 @@ import xyz.alexandersson.worklog.views.edit.EditEntryController;
 import xyz.alexandersson.worklog.views.overview.DayOverviewController;
 
 import java.net.URL;
-import java.text.DecimalFormat;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -50,9 +49,7 @@ import java.util.ResourceBundle;
 import static xyz.alexandersson.worklog.helpers.FXHelper.*;
 
 public class LogController implements Initializable {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(LogController.class);
-    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0.00");
 
     @FXML
     private MenuItem exportMenuItem;

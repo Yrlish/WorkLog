@@ -27,14 +27,12 @@ import xyz.alexandersson.worklog.models.Project;
 import xyz.alexandersson.worklog.models.TotalEntry;
 
 import java.net.URL;
-import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.ResourceBundle;
 
 public class DayOverviewController implements Initializable {
     private static final Logger LOGGER = LoggerFactory.getLogger(DayOverviewController.class);
-    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0.00");
 
     @FXML
     private AnchorPane root;
