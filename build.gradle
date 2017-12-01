@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'xyz.alexandersson'
-version '0.5.1'
+version '0.5.2'
 
 apply plugin: 'java'
 apply plugin: 'application'
