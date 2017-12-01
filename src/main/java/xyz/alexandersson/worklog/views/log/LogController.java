@@ -199,6 +199,23 @@ public class LogController implements Initializable {
             return row;
         });
 
+        logHistoryTable.setOnKeyPressed(event -> {
+            LogEntry logEntry = logHistoryTable.getSelectionModel().getSelectedItem();
+            if (logEntry == null)
+                return;
+
+            switch (event.getCode()) {
+                case ENTER:
+                    onEdit(logEntry);
+                    break;
+                case DELETE:
+                    onDelete(logEntry);
+                    break;
+                default:
+                    break;
+            }
+        });
+
         logTotalTable.setRowFactory(tableView -> {
             final TableRow<TotalEntry> row = new TableRow<>();
 
@@ -214,17 +231,14 @@ public class LogController implements Initializable {
             return row;
         });
 
-        logHistoryTable.setOnKeyPressed(event -> {
-            LogEntry logEntry = logHistoryTable.getSelectionModel().getSelectedItem();
+        logTotalTable.setOnKeyPressed(event -> {
+            TotalEntry totalEntry = logTotalTable.getSelectionModel().getSelectedItem();
+            if (totalEntry == null)
+                return;
 
             switch (event.getCode()) {
                 case ENTER:
-                    onEdit(logEntry);
-                    break;
-                case DELETE:
-                    onDelete(logEntry);
-                    break;
-                default:
+                    onOpenDayOverview(totalEntry.getDate());
                     break;
             }
         });
