@@ -14,11 +14,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.alexandersson.worklog.components.ProjectRowController;
 import xyz.alexandersson.worklog.helpers.DatabaseHelper;
+import xyz.alexandersson.worklog.listeners.TextAreaTabListener;
 import xyz.alexandersson.worklog.listeners.TextFieldTimeChangeListener;
 import xyz.alexandersson.worklog.models.LogEntry;
 import xyz.alexandersson.worklog.views.log.LogController;
@@ -54,6 +56,7 @@ public class EditEntryController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         startTextField.textProperty().addListener(new TextFieldTimeChangeListener(startTextField));
         stopTextField.textProperty().addListener(new TextFieldTimeChangeListener(stopTextField));
+        commentArea.addEventFilter(KeyEvent.KEY_PRESSED, new TextAreaTabListener());
 
         saveBtn.setOnAction(event -> {
             if (onSave()) {

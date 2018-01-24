@@ -18,6 +18,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Modality;
 import javafx.util.Pair;
 import org.slf4j.Logger;
@@ -28,6 +29,7 @@ import xyz.alexandersson.worklog.components.NonDecimalTableCell;
 import xyz.alexandersson.worklog.components.ProjectRowController;
 import xyz.alexandersson.worklog.helpers.DatabaseHelper;
 import xyz.alexandersson.worklog.helpers.FXHelper;
+import xyz.alexandersson.worklog.listeners.TextAreaTabListener;
 import xyz.alexandersson.worklog.listeners.TextFieldTimeChangeListener;
 import xyz.alexandersson.worklog.models.LogEntry;
 import xyz.alexandersson.worklog.models.Project;
@@ -107,6 +109,7 @@ public class LogController implements Initializable {
 
         startTextField.textProperty().addListener(new TextFieldTimeChangeListener(startTextField));
         stopTextField.textProperty().addListener(new TextFieldTimeChangeListener(stopTextField));
+        commentArea.addEventFilter(KeyEvent.KEY_PRESSED, new TextAreaTabListener());
 
         historyDateColumn.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getDate()));
         historyProjectColumn.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getProject()));
