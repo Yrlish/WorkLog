@@ -6,7 +6,7 @@
  *  file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package xyz.alexandersson.worklog;
+package xyz.alexandersson.worklog.listeners;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;

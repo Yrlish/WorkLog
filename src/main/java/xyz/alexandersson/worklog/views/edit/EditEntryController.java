@@ -17,9 +17,9 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import xyz.alexandersson.worklog.TextFieldTimeChangeListener;
 import xyz.alexandersson.worklog.components.ProjectRowController;
 import xyz.alexandersson.worklog.helpers.DatabaseHelper;
+import xyz.alexandersson.worklog.listeners.TextFieldTimeChangeListener;
 import xyz.alexandersson.worklog.models.LogEntry;
 import xyz.alexandersson.worklog.views.log.LogController;
 
