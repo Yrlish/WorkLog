@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.alexandersson.worklog.helpers.DatabaseHelper;
 import xyz.alexandersson.worklog.helpers.FXHelper;
+import xyz.alexandersson.worklog.helpers.SettingsHelper;
 import xyz.alexandersson.worklog.views.log.LogController;
 
 public class WorkLog extends Application {
@@ -31,10 +32,8 @@ public class WorkLog extends Application {
     }
 
     @Override
-    public void stop() throws Exception {
-        super.stop();
-        DatabaseHelper.closeSessionFactory();
-        LOGGER.info("Application stopped");
+    public void init() throws Exception {
+        SettingsHelper.load();
     }
 
     @Override
@@ -52,5 +51,12 @@ public class WorkLog extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
         LOGGER.info("Application started");
+    }
+
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+        DatabaseHelper.closeSessionFactory();
+        LOGGER.info("Application stopped");
     }
 }
