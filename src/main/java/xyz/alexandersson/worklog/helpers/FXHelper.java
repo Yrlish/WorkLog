@@ -1,9 +1,9 @@
 /*
- *  Copyright (c) 2017 Dennis Alexandersson
+ * Copyright (c) 2019 Dennis Alexandersson
  *
- *  This Source Code Form is subject to the terms of the Mozilla Public
- *  License, v. 2.0. If a copy of the MPL was not distributed with this
- *  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
 package xyz.alexandersson.worklog.helpers;
@@ -49,7 +49,11 @@ public class FXHelper {
         if (fxmlFile == null) {
             throw new RuntimeException("Could not find the FXML file for " + controllerClass.getSimpleName());
         } else {
-            LOGGER.debug("Loading {} with {}", fxmlFile.toString().split("!")[1], controllerClass.getName());
+            String url = fxmlFile.toString();
+            if (url.contains("!")) {
+                url = fxmlFile.toString().split("!")[1];
+            }
+            LOGGER.debug("Loading {} with {}", url, controllerClass.getName());
         }
 
         FXMLLoader fxmlLoader = new FXMLLoader(fxmlFile);
