@@ -1,4 +1,0 @@
-Release Notes - WorkLog - Version 0.5.1
-
-** Task
-    * [WL-38] - Change license to MPL

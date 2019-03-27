@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-  ~  Copyright (c) 2017 Dennis Alexandersson
+  ~ Copyright (c) 2019 Dennis Alexandersson
   ~
-  ~  This Source Code Form is subject to the terms of the Mozilla Public
-  ~  License, v. 2.0. If a copy of the MPL was not distributed with this
-  ~  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  ~ This Source Code Form is subject to the terms of the Mozilla Public
+  ~ License, v. 2.0. If a copy of the MPL was not distributed with this
+  ~ file, You can obtain one at http://mozilla.org/MPL/2.0/.
   -->
 
 
@@ -29,7 +29,7 @@
                         <Font name="System Bold" size="38"/>
                     </font>
                 </Label>
-                <Label text="Copyright &#169; 2017 Dennis Alexandersson"/>
+                <Label text="Copyright &#169; 2017-2019 Dennis Alexandersson"/>
             </VBox>
         </top>
         <bottom>
@@ -39,11 +39,11 @@
                 </padding>
                 <HBox alignment="CENTER">
                     <Label text="Version: "/>
-                    <Label fx:id="appVersion" text="0.5"/>
+                    <Label fx:id="appVersion"/>
                 </HBox>
                 <HBox alignment="CENTER">
                     <Label text="Build: "/>
-                    <Label fx:id="appBuild" text="12"/>
+                    <Label fx:id="appBuild"/>
                     <Label text=" @ "/>
                     <Label fx:id="appBuildDate"/>
                 </HBox>

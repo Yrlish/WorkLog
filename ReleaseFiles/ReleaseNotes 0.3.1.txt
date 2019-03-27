@@ -1,5 +1,0 @@
-Release Notes - WorkLog - Version 0.3.1
-
-** Bug
-    * [WL-20] - Cannot log, time input is invalid
-    * [WL-21] - Time input fields are annoying when erasing characters

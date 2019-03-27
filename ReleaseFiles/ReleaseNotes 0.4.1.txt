@@ -1,5 +1,0 @@
-Release Notes - WorkLog - Version 0.4.1
-
-** Bug
-    * [WL-27] - Disable unfinished menuitem for Settings
-    * [WL-28] - Stop time before start time should not be possible

@@ -1,4 +1,0 @@
-Release Notes - WorkLog - Version 0.5.2
-
-* Added ability to open day overview with ENTER
-* Minor underlying improvements
