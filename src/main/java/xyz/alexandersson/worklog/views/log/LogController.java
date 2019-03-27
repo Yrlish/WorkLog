@@ -27,6 +27,7 @@ import xyz.alexandersson.worklog.components.CommentTableCell;
 import xyz.alexandersson.worklog.components.DecimalTableCell;
 import xyz.alexandersson.worklog.components.NonDecimalTableCell;
 import xyz.alexandersson.worklog.components.ProjectRowController;
+import xyz.alexandersson.worklog.converters.ISOLocalDateStringConverter;
 import xyz.alexandersson.worklog.helpers.DatabaseHelper;
 import xyz.alexandersson.worklog.helpers.FXHelper;
 import xyz.alexandersson.worklog.listeners.TextAreaTabListener;
@@ -217,6 +218,7 @@ public class LogController implements Initializable {
         projectRowController.init();
 
         datePicker.setValue(LocalDate.now());
+        datePicker.setConverter(new ISOLocalDateStringConverter());
         logBtn.setOnAction(event -> onLog());
 
         reloadData();
@@ -386,4 +388,5 @@ public class LogController implements Initializable {
     public ObservableList<LogEntry> getLogEntries() {
         return logHistoryTable.getItems();
     }
+
 }
