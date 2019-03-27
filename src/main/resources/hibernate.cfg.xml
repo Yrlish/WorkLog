@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='utf-8'?>
 <!--
-  ~  Copyright (c) 2017 Dennis Alexandersson
+  ~ Copyright (c) 2019 Dennis Alexandersson
   ~
-  ~  This Source Code Form is subject to the terms of the Mozilla Public
-  ~  License, v. 2.0. If a copy of the MPL was not distributed with this
-  ~  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  ~ This Source Code Form is subject to the terms of the Mozilla Public
+  ~ License, v. 2.0. If a copy of the MPL was not distributed with this
+  ~ file, You can obtain one at http://mozilla.org/MPL/2.0/.
   -->
 
 <!DOCTYPE hibernate-configuration PUBLIC
@@ -13,7 +13,6 @@
 <hibernate-configuration>
     <session-factory>
         <property name="connection.driver_class">org.hsqldb.jdbcDriver</property>
-        <property name="connection.url">jdbc:hsqldb:file:DB/WorkLog;hsqldb.write_delay=false</property>
         <property name="connection.username">sa</property>
         <property name="connection.password"/>
         <property name="hibernate.dialect">org.hibernate.dialect.HSQLDialect</property>

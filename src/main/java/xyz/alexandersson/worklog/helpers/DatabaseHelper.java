@@ -1,9 +1,9 @@
 /*
- *  Copyright (c) 2017 Dennis Alexandersson
+ * Copyright (c) 2019 Dennis Alexandersson
  *
- *  This Source Code Form is subject to the terms of the Mozilla Public
- *  License, v. 2.0. If a copy of the MPL was not distributed with this
- *  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
 package xyz.alexandersson.worklog.helpers;
@@ -19,13 +19,21 @@ import org.slf4j.LoggerFactory;
 import xyz.alexandersson.worklog.models.LogEntry;
 import xyz.alexandersson.worklog.models.Project;
 
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 public class DatabaseHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseHelper.class);
 
-    private static SessionFactory sessionFactory = new Configuration().configure("/hibernate.cfg.xml").buildSessionFactory();
+    private static SessionFactory sessionFactory = new Configuration()
+            .configure()
+            .mergeProperties(new Properties())
+            .setProperty("hibernate.connection.url", String.format(
+                    "jdbc:hsqldb:file:%s;hsqldb.write_delay=false",
+                    Paths.get(SettingsHelper.CONFIG_FOLDER.toString(), "DB", "WorkLog")))
+            .buildSessionFactory();
 
     /**
      * Save or update a LogEntry to the database

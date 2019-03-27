@@ -1,6 +1,30 @@
-The WorkLog.jar file is recommended to place in its own folder, because it creates some files alongside it.
+==============
+ REQUIREMENTS
+==============
+Latest version of Java 8 - https://java.com
 
-To install, just extract the WorkLog-folder from the archive to somewhere convenient.
-When updating, replace the existing WorkLog.jar with the new one in from archive.
 
-Just to be on the safe side, when updating, make a copy of the DB-folder before first launching the new version.
+===============
+    INSTALL
+===============
+Place the WorkLog.jar-file somewhere convenient and run it.
+
+
+===============
+    UPGRADE
+===============
+There is a new update procedure to version 0.6 because the file structure has changed. There is no longer files
+being created alongside the jarfile. The database and log files is now located in its own folder somewhere in the
+userhome folder.
+
+>> YOU NEED TO DO THESE FOLLOWING STEPS TO KEEP YOUR DATABASE <<
+
+1. Turn off any running instances of WorkLog.
+2. Open your previous WorkLog-folder, where the jar-file and DB-folder is located.
+3. *COPY* the DB-folder.
+4. Open this location:
+    Windows: C:\Users\<username>\AppData\Roaming\WorkLog
+    Linux: /home/<username>/.WorkLog
+5. In the WorkLog folder you opened in step 4, rename the DB-folder if it exists to 'DB_old'.
+6. *PASTE* the DB-folder from step 3 into the folder you opened in step 4.
+7. You can now start WorkLog 0.6+.
