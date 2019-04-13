@@ -20,6 +20,7 @@ import javafx.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import xyz.alexandersson.worklog.WorkLog;
 
 import java.io.IOException;
 import java.net.URL;
@@ -77,6 +78,8 @@ public class FXHelper {
         stage.setTitle(title);
         stage.setScene(scene);
         stage.setResizable(resizeable);
+
+        scene.getStylesheets().add(WorkLog.class.getResource("views/style.css").toExternalForm());
 
         scene.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ESCAPE) {

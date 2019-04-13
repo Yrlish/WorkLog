@@ -26,7 +26,8 @@
                         <Font name="System Bold" size="38"/>
                     </font>
                 </Label>
-                <Label text="Copyright &#169; 2017-2019 Dennis Alexandersson"/>
+                <Label text="Dennis Alexandersson"/>
+                <Hyperlink text="dennis.alexandersson.xyz" fx:id="homepageLink"/>
             </VBox>
         </top>
         <bottom>
@@ -44,7 +45,7 @@
                     <Label text=" @ "/>
                     <Label fx:id="appBuildDate"/>
                 </HBox>
-                <Hyperlink text="Mozilla Public License" fx:id="licenseLink"/>
+                <Hyperlink text="Mozilla Public License 2.0" fx:id="licenseLink"/>
             </VBox>
         </bottom>
     </BorderPane>

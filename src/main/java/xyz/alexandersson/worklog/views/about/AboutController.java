@@ -31,6 +31,8 @@ public class AboutController implements Initializable {
     @FXML
     private Label appBuildDate;
     @FXML
+    private Hyperlink homepageLink;
+    @FXML
     private Hyperlink licenseLink;
 
     @Override
@@ -42,8 +44,7 @@ public class AboutController implements Initializable {
         LocalDateTime buildDateTime = AppVersion.getBuildTime().toLocalDateTime();
         appBuildDate.setText(String.format("%s %s", buildDateTime.toLocalDate(), buildDateTime.toLocalTime()));
 
-        licenseLink.setOnAction(event -> {
-            WorkLog.getApplicationHostServices().showDocument("https://opensource.org/licenses/MPL-2.0");
-        });
+        homepageLink.setOnAction(event -> WorkLog.getApplicationHostServices().showDocument("https://dennis.alexandersson.xyz"));
+        licenseLink.setOnAction(event -> WorkLog.getApplicationHostServices().showDocument("https://opensource.org/licenses/MPL-2.0"));
     }
 }
