@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~  Copyright (c) 2017 Dennis Alexandersson
-  ~
-  ~  This Source Code Form is subject to the terms of the Mozilla Public
-  ~  License, v. 2.0. If a copy of the MPL was not distributed with this
-  ~  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  ~ This Source Code Form is subject to the terms of the Mozilla Public
+  ~ License, v. 2.0. If a copy of the MPL was not distributed with this
+  ~ file, You can obtain one at http://mozilla.org/MPL/2.0/.
   -->
 
 <Configuration status="WARN">
@@ -12,20 +10,30 @@
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%highlight{%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg}%n"/>
         </Console>
-        <File name="RollingFile">
-            <FileName>application.log</FileName>
-            <PatternLayout>
-                <Pattern>%d{yyyy-MMM-dd HH:mm:ss a} [%t] %-5level %logger{36} - %msg%n</Pattern>
-            </PatternLayout>
-        </File>
+        <Routing name="RollingFileRoute">
+            <Routes pattern="$${sys:logFilename}">
+                <Route>
+                    <RollingFile name="RollingFile" fileName="${sys:logFilename}.log"
+                                 filePattern="${sys:logFilename}-%d{yyyy-MM-dd}.log.gz">
+                        <PatternLayout>
+                            <Pattern>%d{yyyy-MM-dd HH:mm:ss a} [%t] %-5level %logger{36} - %msg%n</Pattern>
+                        </PatternLayout>
+                        <Policies>
+                            <CronTriggeringPolicy schedule="0 0 0 * * ?" evaluateOnStartup="true" />
+                        </Policies>
+                        <DefaultRolloverStrategy max="5" />
+                    </RollingFile>
+                </Route>
+            </Routes>
+        </Routing>
     </Appenders>
     <Loggers>
         <Root level="debug">
-            <AppenderRef ref="RollingFile"/>
+            <AppenderRef ref="RollingFileRoute"/>
             <AppenderRef ref="Console"/>
         </Root>
         <Logger name="org.hibernate" level="info" additivity="false">
-            <AppenderRef ref="RollingFile"/>
+            <AppenderRef ref="RollingFileRoute"/>
         </Logger>
     </Loggers>
 </Configuration>

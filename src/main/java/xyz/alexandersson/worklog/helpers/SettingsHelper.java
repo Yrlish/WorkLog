@@ -1,6 +1,4 @@
 /*
- * Copyright (c) 2019 Dennis Alexandersson
- *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -33,25 +31,23 @@ public class SettingsHelper {
             CONFIG_FOLDER = Paths.get(System.getProperty("user.home"), "AppData", "Roaming", "WorkLog");
             CONFIG_FOLDER.toFile().mkdirs();
             CONFIG_FILE = Paths.get(CONFIG_FOLDER.toString(), "config.xml");
-            LOGGER.debug("Detected Windows, using '{}'...", CONFIG_FILE);
         } else if (os.contains("mac")) {
             CONFIG_FOLDER = Paths.get(System.getProperty("user.home"), "Library", "Application Support", "WorkLog");
             CONFIG_FOLDER.toFile().mkdirs();
             CONFIG_FILE = Paths.get(CONFIG_FOLDER.toString(), "config.xml");
-            LOGGER.debug("Detected Windows, using '{}'...");
         } else if (os.contains("nix") || os.contains("nux") || os.indexOf("aix") > 0) {
             CONFIG_FOLDER = Paths.get(System.getProperty("user.home"), ".WorkLog");
             CONFIG_FOLDER.toFile().mkdir();
             CONFIG_FILE = Paths.get(CONFIG_FOLDER.toString(), "config.xml");
-            LOGGER.debug("Detected Windows, using '{}'...", CONFIG_FILE);
         } else {
             CONFIG_FOLDER = Paths.get(".");
             CONFIG_FILE = Paths.get("config.xml");
-            LOGGER.info("Could not detect a predefined OS, using '{}'...");
         }
     }
 
     public static void load() {
+        LOGGER.debug("Loading configuration {}", CONFIG_FILE);
+
         if (CONFIG_FILE.toFile().exists()) {
             try (InputStream is = new FileInputStream(CONFIG_FILE.toFile())) {
                 PROPERTIES.loadFromXML(is);
