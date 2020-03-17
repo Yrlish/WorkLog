@@ -31,17 +31,21 @@ public class SettingsHelper {
             CONFIG_FOLDER = Paths.get(System.getProperty("user.home"), "AppData", "Roaming", "WorkLog");
             CONFIG_FOLDER.toFile().mkdirs();
             CONFIG_FILE = Paths.get(CONFIG_FOLDER.toString(), "config.xml");
+            LOGGER.debug("Detected Windows, using '{}'...", CONFIG_FILE);
         } else if (os.contains("mac")) {
             CONFIG_FOLDER = Paths.get(System.getProperty("user.home"), "Library", "Application Support", "WorkLog");
             CONFIG_FOLDER.toFile().mkdirs();
             CONFIG_FILE = Paths.get(CONFIG_FOLDER.toString(), "config.xml");
+            LOGGER.debug("Detected Mac, using '{}'...", CONFIG_FILE);
         } else if (os.contains("nix") || os.contains("nux") || os.indexOf("aix") > 0) {
             CONFIG_FOLDER = Paths.get(System.getProperty("user.home"), ".WorkLog");
-            CONFIG_FOLDER.toFile().mkdir();
+            CONFIG_FOLDER.toFile().mkdirs();
             CONFIG_FILE = Paths.get(CONFIG_FOLDER.toString(), "config.xml");
+            LOGGER.debug("Detected Linux, using '{}'...", CONFIG_FILE);
         } else {
             CONFIG_FOLDER = Paths.get(".");
             CONFIG_FILE = Paths.get("config.xml");
+            LOGGER.info("Could not detect a predefined OS, using '{}'...", CONFIG_FILE);
         }
     }
 
@@ -69,7 +73,7 @@ public class SettingsHelper {
         boolean updated = false;
 
         if (!PROPERTIES.containsKey("maxItemsInLists")) {
-            PROPERTIES.setProperty("maxItemsInLists", "100");
+            PROPERTIES.setProperty("maxItemsInLists", "-1");
             updated = true;
         }
 
