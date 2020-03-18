@@ -2,13 +2,11 @@ language: java
 dist: bionic
 jdk: openjdk8
 
+before_install:
+  - sudo apt-get -y install openjfx=8u161-b12-1ubuntu2 libopenjfx-java=8u161-b12-1ubuntu2 libopenjfx-jni=8u161-b12-1ubuntu2
+
 jobs:
   include:
-    - stage: versions
-      name: "Java"
-      script: java -version
-    - name: "Gradle"
-      script: ./gradlew -v
     - stage: build
       script: ./gradlew --no-daemon shadowJar
     - stage: package
