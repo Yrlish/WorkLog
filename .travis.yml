@@ -1,0 +1,15 @@
+language: java
+dist: bionic
+jdk: oraclejdk8
+
+jobs:
+  include:
+    - stage: versions
+      name: "Gradle"
+      script: ./gradlew -v
+    - name: "Java"
+      script: java -version
+    - stage: build
+      script: ./gradlew --no-daemon shadowJar
+    - stage: package
+      script: ./archive.sh
