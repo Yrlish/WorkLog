@@ -5,6 +5,8 @@ jdk: openjdk8
 before_install:
   - sudo apt-get -y install openjfx=8u161-b12-1ubuntu2 libopenjfx-java=8u161-b12-1ubuntu2 libopenjfx-jni=8u161-b12-1ubuntu2
 
+install: skip
+
 jobs:
   include:
     - stage: build
