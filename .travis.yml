@@ -2,9 +2,6 @@ language: java
 dist: trusty
 jdk: oraclejdk8
 
-jobs:
-  include:
-    - stage: build
-      script: ./gradlew --no-daemon shadowJar
-    - stage: package
-      script: ./archive.sh
+script: ./gradlew --no-daemon shadowJar
+
+after_success: ./archive.sh

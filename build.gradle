@@ -23,8 +23,8 @@ repositories {
 
 
 ext.getBuildNumber = { ->
-    if(System.env.BUILD_NUMBER){
-        return System.env.BUILD_NUMBER
+    if (System.env.TRAVIS_BUILD_NUMBER) {
+        return System.env.TRAVIS_BUILD_NUMBER
     } else {
         return "Unofficial"
     }
